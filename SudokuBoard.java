@@ -1,0 +1,772 @@
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.ListIterator;
+import java.util.Scanner;
+
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+public class SudokuBoard extends JFrame
+{
+	// Private instance variables for features of the board
+	private int  i=0, j=0, counter=0, currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
+	private JTextPane titleMessage,possibleValues;
+	private JTextField[][] entries;
+	private JTextField timeDisplay;
+	private JPanel mainBoard,title,sideBar,timerPanel,fontColorPanel;
+	private JPanel[] regions;
+	private JButton save, check, hint, quit; 
+	private JFrame error;
+	private JTextFieldLimit[][] doc;
+	private Timer timer;
+	private User user;
+	private String difficulty;
+	// Constructor for the new Board
+	public SudokuBoard(int width, int height, String diff, User u)
+	{
+		user = u;
+		difficulty = diff;
+		this.setBackground(Color.WHITE);
+		
+		this.setLayout(new BorderLayout());
+		
+		titleMessage = new JTextPane();
+    	
+		title = new JPanel();
+		title.setLayout(new GridLayout(1,1));
+		this.add(title, BorderLayout.NORTH);
+		title.add(titleMessage);
+		
+		titleMessage.setEditable(false);
+		StyledDocument doc2 = (StyledDocument) titleMessage.getDocument();
+		SimpleAttributeSet tileFont = new SimpleAttributeSet();
+    	StyleConstants.setFontFamily(tileFont, "Serif");
+    	StyleConstants.setFontSize(tileFont, 12);
+    	StyleConstants.setForeground(tileFont, Color.GRAY);
+		SimpleAttributeSet messageFont = new SimpleAttributeSet();
+    	StyleConstants.setFontFamily(messageFont, "Serif");
+    	StyleConstants.setFontSize(messageFont, 32);
+    	StyleConstants.setForeground(messageFont, Color.darkGray);
+    	try {
+			doc2.insertString(doc2.getLength(), "\t\t\t\t\tSolve this " + difficulty + " Puzzle, " + user.getUsername(), messageFont );
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.add(Box.createHorizontalStrut(100), BorderLayout.WEST);
+		this.add(Box.createVerticalStrut(100), BorderLayout.SOUTH);
+		mainBoard = new JPanel();
+		this.add(mainBoard, BorderLayout.CENTER);
+		mainBoard.setLayout(new GridLayout(3,3));
+		mainBoard.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		
+		sideBar = new JPanel();
+		sideBar.setLayout(new GridLayout(5,1));
+		possibleValues = new JTextPane();
+		possibleValues.setText("Enter possible Values Below");
+		possibleValues.setEditable(true);
+		sideBar.add(possibleValues);
+		save = new JButton("Save Puzzle");
+		save.addActionListener(new ActionListener() 
+	    {
+		    public void actionPerformed(ActionEvent ae)
+		    {
+		    	saveGame();
+				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
+		    }
+		});
+		check = new JButton("Check Puzzle");
+		check.addActionListener(new ActionListener() 
+	    {
+		    public void actionPerformed(ActionEvent ae)
+		    {
+		    	if(checkPuzzle())
+		    	{
+		    		timer.stop();
+		    		computeStats();		
+		    		backToMenu();
+		    	}
+		    	else
+		    	{
+		    		JOptionPane.showMessageDialog(null, "Incorrect Answer. Victory has defeated you.", "Puzzle Incomplete", JOptionPane.ERROR_MESSAGE);
+		    	}
+		    }
+		});
+		hint = new JButton("Hint");
+		hint.addActionListener(new ActionListener() 
+	    {
+		    public void actionPerformed(ActionEvent ae)
+		    {
+				JOptionPane.showMessageDialog(null, "Hint: You just lost 5 points.", "Hint", JOptionPane.INFORMATION_MESSAGE);
+		    	numberOfHints++;
+		    }
+		});
+		quit = new JButton("Quit Puzzle");
+		quit.addActionListener(new ActionListener() 
+	    {
+		    public void actionPerformed(ActionEvent ae)
+		    {
+		    	backToMenu();
+		    }
+		});
+		sideBar.add(save);
+		sideBar.add(check);
+		sideBar.add(hint);
+		sideBar.add(quit);
+		this.add(sideBar,BorderLayout.EAST);
+		
+		fontColorPanel = new JPanel();
+		String[] colors = {"Black","Cyan","Green","Magenta", "Orange", "Pink","Red", "Yellow" };
+		final JComboBox colorList = new JComboBox(colors);
+		colorList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				changeFontColor((String)colorList.getSelectedItem());
+			}
+			
+		});
+		JTextField colorSelectPrompt = new JTextField("Choose a color");
+		colorSelectPrompt.setEditable(false);
+		fontColorPanel.setLayout(new BoxLayout(fontColorPanel, BoxLayout.Y_AXIS));
+		fontColorPanel.add(colorSelectPrompt);
+		fontColorPanel.add(colorList);
+		fontColorPanel.add(Box.createRigidArea(new Dimension(0,700)));
+		fontColorPanel.setBackground(Color.WHITE);
+		
+		this.add(fontColorPanel, BorderLayout.WEST);
+		
+		timerPanel = new JPanel();
+		timerPanel.setLayout(new BoxLayout(timerPanel, BoxLayout.X_AXIS));
+		timerPanel.setBackground(Color.WHITE);
+		timeDisplay = new JTextField();
+		timeDisplay.setEditable(false);
+		timerPanel.add(Box.createRigidArea(new Dimension(340,50)));
+		timerPanel.add(timeDisplay);
+		timerPanel.add(Box.createRigidArea(new Dimension(340,50)));
+		
+		class CountdownTimerListener implements ActionListener
+		{
+		      public void actionPerformed(ActionEvent e) 
+		      {
+		    	currentTime++;  
+		        minutes = currentTime/60;
+		        seconds = currentTime%60;
+		        timeDisplay.setText("Current Time on Puzzle: " + String.valueOf(minutes) + " minutes and " + String.valueOf(seconds) + " seconds");
+	
+		      }
+		}
+		timer = new Timer(1000,new CountdownTimerListener());
+		timer.start();	
+		this.add(timerPanel, BorderLayout.SOUTH);
+		
+		
+		entries = new JTextField[9][9];
+		doc = new JTextFieldLimit[9][9];
+		regions = new JPanel[9];
+		
+		error = new JFrame();
+		
+		// Initialize 3x3 regions
+		for(i = 0; i < 9; i++)
+		{
+			regions[i] = new JPanel();
+			regions[i].setLayout(new GridLayout(3,3));
+			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		}
+		//Initialize mainBoard
+		for(i = 0; i < 3; i++)
+		{
+			for(j = 0; j < 3; j++)
+			{
+				mainBoard.add(regions[counter]);
+				counter++;
+			}
+		}
+		
+		// Initialize each region[0]
+		for(i = 0; i < 3; i++)
+		{
+			
+			for(j = 0; j < 3; j++)
+			{
+				entries[i][j] = new JTextField("1");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "1", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[0].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[1]
+		for(i = 0; i < 3; i++)
+		{					
+			for(j = 3; j < 6; j++)
+			{
+				entries[i][j] = new JTextField("2");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "2", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[1].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[2]
+		for(i = 0; i < 3; i++)
+		{					
+			for(j = 6; j < 9; j++)
+			{
+				entries[i][j] = new JTextField("3");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "3", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[2].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[3]
+		for(i = 3; i < 6; i++)
+		{					
+			for(j = 0; j < 3; j++)
+			{
+				entries[i][j] = new JTextField("4");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "4", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[3].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[4]
+		for(i = 3; i < 6; i++)
+		{					
+			for(j = 3; j < 6; j++)
+			{
+				entries[i][j] = new JTextField("5");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "5", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[4].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[5]
+		for(i = 3; i < 6; i++)
+		{					
+			for(j = 6; j < 9; j++)
+			{
+				entries[i][j] = new JTextField("6");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "6", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[5].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[6]
+		for(i = 6; i < 9; i++)
+		{					
+			for(j = 0; j < 3; j++)
+			{
+				entries[i][j] = new JTextField("7");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "7", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[6].add(entries[i][j]);
+			}
+		}
+		// Initialize each region[7]
+		for(i = 6; i < 9; i++)
+		{					
+			for(j = 3; j < 6; j++)
+			{
+				entries[i][j] = new JTextField("8");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "8", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[7].add(entries[i][j]);
+			}
+		}
+		// Initialize each region[7]
+		for(i = 6; i < 9; i++)
+		{					
+			for(j = 6; j < 9; j++)
+				{
+				entries[i][j] = new JTextField("9");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "9", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+					regions[8].add(entries[i][j]);
+				}
+			}
+		loadPuzzle(difficulty);
+	}
+	
+	boolean checkRow(int row)
+	{
+		int i = 0, j = 0, count = 0;
+		for(i = 1; i < 10; i++)
+		{	
+			count = 0;
+			for(j = 0; j < 9; j++)
+			{
+				if(i == Integer.parseInt(entries[row][j].getText()) )
+				{
+					count++;
+				}
+				if( count >= 2)
+				{
+					System.out.println("checkRow() returned false at i: " + row + " j: "+j + " with " + entries[row][j].getText()); 
+					return false;
+				}
+				
+			}
+		}
+		
+		return true;
+	}
+	boolean checkColumn(int col)
+	{
+		int i = 0, j = 0, count = 0;
+		for(j = 0; j < 10; j++)
+		{
+			count = 0;
+			for(i = 0; i < 9; i++)
+			{
+				if(j == Integer.parseInt(entries[i][col].getText()) )
+				{
+					count++;
+				}
+				if(count >= 2)
+				{
+					System.out.println("checkColumn() returned false at i: " + i + " j: "+ col + " with " + entries[i][col].getText()); 
+					return false;
+				}
+				
+			}
+		}
+		
+		return true;
+	}
+	boolean checkBox(int row, int col)
+	{
+		int i = 0, j = 0, k = 0, count = 0;
+		for(k = 1; k < 10; k++)
+		{
+			for(i = row; i < row+3; i++)
+			{
+				for(j = col; j < col+3; j++)
+				{	
+					count = 0;
+					
+						if(k == Integer.parseInt(entries[i][j].getText()) )
+						{
+							count++;
+						}
+						if(count >= 2)
+						{
+							System.out.println("checkBox() returned false at i: " + i + " j: "+ j + " with " + entries[i][j].getText()); 
+							return false;
+						}
+					
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	boolean isEmptySpace()
+	{
+		int i = 0, j = 0;
+		for(i = 0; i < 9; i++)
+		{
+			for(j = 0; j < 9; j++)
+			{	
+				if(entries[i][j].getText().equals(""))
+				{
+					System.out.println("isEmptySpace() returned false at i: " + i + " j: "+j); 
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	boolean checkPuzzle()
+	{
+		int i = 0;
+		if(!isEmptySpace())
+		{
+			return false;
+		}
+		if(!validateInput())
+		{
+			return false;
+		}
+		for(i = 0; i < 9; i++)
+		{
+			if(checkRow(i) == false || checkColumn(i) == false)
+			{
+				return false;
+			}
+		}
+		
+		if(!checkBox(0,0)||!checkBox(0,3)||!checkBox(0,6)||!checkBox(3,0)||!checkBox(3,3)||!checkBox(3,6)||!checkBox(6,0)||!checkBox(6,3)||!checkBox(6,6))
+			return false;
+		
+		return true;
+	}
+	
+	boolean validateInput()
+	{
+		int i = 0, j = 0;
+		for(i = 0; i < 9; i++)
+		{
+			for(j = 0; j < 9; j++)
+			{
+				    try 
+				    {
+				    	
+				        Integer.parseInt(entries[i][j].getText());
+				    }
+				    catch (NumberFormatException e) 
+				    {
+				        JOptionPane.showMessageDialog(error, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
+				        return false;
+				    }
+			}
+		}
+		return true;
+	}
+	
+	// This should should contain a parameter based on the difficulty of the puzzle
+	void loadPuzzle(String difficulty)
+	{
+		File file;
+		if(difficulty.equals("Easy"))
+		{
+			file = new File("easy9x9.txt");
+		}
+		else if(difficulty.equals("Medium"))
+		{
+			file = new File("medium9x9.txt");
+		}
+		else if(difficulty.equals("Hard"))
+		{
+			file = new File("hard9x9.txt");
+		}
+		else
+		{
+			file = new File("evil9x9.txt");
+		}
+		int i = 0, j = 0, value = 0;
+		Scanner scanner;
+		try 
+		{
+			scanner = new Scanner(file);
+			
+			for(i = 0; i < 9; i++)
+			{
+				for(j = 0; j < 9; j++)
+				{
+					if (scanner.hasNextInt())
+					{
+						value = scanner.nextInt();
+						if(value != 0)
+						{
+							try
+							{
+								entries[i][j].setText(String.valueOf(value));
+								entries[i][j].setForeground(Color.BLUE);
+								entries[i][j].setEditable(false);
+							}
+							catch(Exception e)
+							{
+								System.out.println("It broke at i: " + i + " j: " + j + " with " + value);	
+							}
+						}
+						else
+						{
+							entries[i][j].setText("");
+						}
+	
+					}
+				}
+			}
+			scanner.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not load puzzle. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}
+	public void computeStats()
+	{
+		user.getScore().setCurrentTime(currentTime);
+		user.getScore().setNumberOfHints(numberOfHints);
+		user.getScore().setLastDifficulty(difficulty);
+		user.getScore().setLastSize("9x9");
+		user.getScore().calculateScore();
+		user.getScore().displayLatestStats();
+		saveScoreStats();
+		
+	}
+	
+	public void saveScoreStats()
+	{
+		File file = new File("Scores.txt");	
+		boolean flag = false;
+		FileWriter writer;
+		ArrayList<String> scoreData = new ArrayList<String>();
+		ListIterator<String> iterator;
+		
+		try
+		{
+			Scanner s = new Scanner(file);
+			while(s.hasNextLine())
+			{
+				scoreData.add(s.nextLine());
+			}
+			s.close();
+			
+			iterator = scoreData.listIterator();
+			while(iterator.hasNext())
+			{
+				if(iterator.next().equals(user.getUsername()))
+				{
+					iterator.next();
+					iterator.set( String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize());
+					flag = true;
+					break;
+				}
+			}
+			if(flag == false)
+			{
+				scoreData.add(user.getUsername());
+				scoreData.add(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize());
+			}
+			writer = new FileWriter("Scores.txt");
+			iterator = scoreData.listIterator();
+			while(iterator.hasNext())
+			{
+				writer.write(iterator.next());
+				writer.write("\n");
+			}
+			writer.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not find Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(null, "Could not update Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}	
+	}
+	
+	public void backToMenu()
+	{
+		int reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
+		if(reply == JOptionPane.YES_OPTION)
+		{
+			reply = JOptionPane.showConfirmDialog(null, "Would you like to save your progress before quiting?");
+			if(reply == JOptionPane.YES_OPTION)
+			{
+				saveGame();
+				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
+				
+			}
+			reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
+			if(reply == JOptionPane.YES_OPTION)
+			{
+				ShowSolution solution = new ShowSolution("easy9x9Solution.txt");
+				solution.setSize(500,500);
+				solution.setTitle("Solution");
+				solution.setVisible(true);
+				solution.setResizable(false);
+			}
+			MainMenu menu = new MainMenu(1000,800, user);
+			menu.setSize(1000,800);
+			menu.setVisible(true);
+			menu.setTitle("CSE360 Sudoku Main Menu");
+			dispose();
+		}
+	}
+	public void changeFontColor(String color)
+	{
+		int i = 0, j = 0;
+		Color fontColor;
+		if(color.equals("Black"))
+			fontColor = Color.BLACK;
+		else if(color.equals("Cyan"))
+			fontColor = Color.CYAN;
+		else if(color.equals("Green"))
+			fontColor = Color.GREEN;
+		else if(color.equals("Magenta"))
+			fontColor = Color.MAGENTA;
+		else if(color.equals("Orange"))
+			fontColor = Color.ORANGE;
+		else if(color.equals("Pink"))
+			fontColor = Color.PINK;
+		else if(color.equals("Red"))
+			fontColor = Color.RED;
+		else 
+			fontColor = Color.YELLOW;
+		
+		for(i = 0; i < 9; i++)
+		{
+			for(j = 0; j < 9; j++)
+			{
+				if(entries[i][j].isEditable() && entries[i][j].getText().equals(""))
+				{
+					entries[i][j].setForeground(fontColor);
+				}
+			}
+		}
+		
+	}
+	public void saveGame()
+	{
+		File file = new File("Saved_Games.txt");	
+		FileWriter writer;
+		boolean flag = false;
+		ArrayList<String> data = new ArrayList<String>();
+		ListIterator<String> iterator;
+		String currentPuzzle = getCurrentPuzzle();
+		try
+		{
+			Scanner s = new Scanner(file);
+			while(s.hasNextLine())
+			{
+				data.add(s.nextLine());
+			}
+			s.close();
+			
+			iterator = data.listIterator();
+			while(iterator.hasNext())
+			{
+				if(iterator.next().equals(user.getUsername()))
+				{
+					iterator.next();
+					iterator.set(difficulty + " " + "9x9" + " " + String.valueOf(currentTime));
+					if(iterator.hasNext())
+					{
+						iterator.next();
+						iterator.set(currentPuzzle);
+						flag = true;
+						break;
+					}
+					else
+					{
+						data.add(currentPuzzle);
+						break;
+					}
+				}
+			}
+			if(flag == false)
+			{
+				data.add(user.getUsername());
+				data.add(currentPuzzle);
+			}
+			writer = new FileWriter("Saved_Games.txt");
+			iterator = data.listIterator();
+			while(iterator.hasNext())
+			{
+				writer.write(iterator.next());
+				writer.write("\n");
+			}
+			writer.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not find Saved_Games. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(null, "Could not update Saved_Games. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}
+	public String getCurrentPuzzle()
+	{
+		String currentPuzzle = "";
+		int i = 0, j = 0;
+		for(i = 0; i < 9; i++)
+		{
+			for(j = 0; j < 9; j++)
+			{
+				if(entries[i][j].getText().equals(""))
+				{
+					currentPuzzle = currentPuzzle + "0 ";
+				}
+				else
+				{
+					currentPuzzle = currentPuzzle + entries[i][j].getText() + " ";
+				}
+			}
+			
+		}
+		System.out.println("Current Puzzle is" + currentPuzzle);
+		return currentPuzzle;
+	}
+}
