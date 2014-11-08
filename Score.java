@@ -83,7 +83,7 @@ public class Score
 		else if(last_size.equals("16x16"))
 			basePoints = 1000.0;
 		
-		current_score = (float) ((( (current_time/480.0) * basePoints ) * multiplier ) - ( number_of_hints * 5.0 ) );
+		current_score = (float) ((( (480/current_time) * basePoints ) * multiplier ) - ( number_of_hints * 5.0 ) );
 		updateHighScore();
 	}
 	
@@ -103,12 +103,16 @@ public class Score
 			JOptionPane.showMessageDialog(null,"New High Score","High Score Updated",JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	public void loadScore(double highScore, int bestTime, String bestDifficulty, String bestSize)
+	public void loadScore(double highScore, int bestTime, String bestDifficulty, String bestSize, double lastScore, int lastTime, String lastDifficulty, String lastSize)
 	{
 		high_score = highScore;
 		best_time = bestTime;
 		best_difficulty = bestDifficulty;
 		best_size = bestSize;
+		current_score = lastScore;
+		current_time = lastTime;
+		last_difficulty = lastDifficulty;
+		last_size = lastSize;
 	}
 	public void displayLatestStats()
 	{

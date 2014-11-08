@@ -92,14 +92,19 @@ public class LogIn extends JFrame
 			JOptionPane.showMessageDialog(null, "System Error: Can't find User data.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		catch(Exception a)
+		{
+			JOptionPane.showMessageDialog(null, "System Error: Can't find User data.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		
 	}
 	public Score findScore(String name)
 	{
 		File file = new File("Scores.txt");
-		double score;
-		int time;
-		String lineFromFile, difficulty, size;
+		double highScore, lastScore;
+		int bestTime,lastTime;
+		String lineFromFile, bestDifficulty, bestSize,lastDifficulty,lastSize;
 		StringTokenizer scoreData;
 		Score userScore = new Score();
 		Scanner scanner;
@@ -115,12 +120,16 @@ public class LogIn extends JFrame
 					lineFromFile = scanner.nextLine();
 					System.out.println("Data Search Result: " + lineFromFile+"\n");
 					scoreData = new StringTokenizer(lineFromFile);
-					score = Double.parseDouble(scoreData.nextElement().toString());
-					time = Integer.parseInt(scoreData.nextElement().toString());
-					difficulty = scoreData.nextElement().toString();
-					size = scoreData.nextElement().toString();
-					userScore.loadScore(score,time,difficulty,size);
-					System.out.println("Score data:\n\tHigh Score: " + score + "\n\tTime: " + time + "\n\tDifficulty: " + difficulty + "\n\tSize: " + size);
+					highScore = Double.parseDouble(scoreData.nextElement().toString());
+					bestTime = Integer.parseInt(scoreData.nextElement().toString());
+					bestDifficulty = scoreData.nextElement().toString();
+					bestSize = scoreData.nextElement().toString();
+					lastScore = Double.parseDouble(scoreData.nextElement().toString());
+					lastTime = Integer.parseInt(scoreData.nextElement().toString());
+					lastDifficulty = scoreData.nextElement().toString();
+					lastSize = scoreData.nextElement().toString();
+					userScore.loadScore(highScore,bestTime,bestDifficulty,bestSize,lastScore,lastTime,lastDifficulty,lastSize);
+					System.out.println("Score data:\n\tHigh Score: " + highScore + "\n\tTime: " + bestTime + "\n\tDifficulty: " + bestDifficulty + "\n\tSize: " + bestSize + "\n\tLast Score: " + lastScore + "\n\tTime: " + lastTime + "\n\tDifficulty: " + lastDifficulty + "\n\tSize: " + lastSize);
 					break;
 				
 				}
@@ -135,7 +144,6 @@ public class LogIn extends JFrame
 		{
 			JOptionPane.showMessageDialog(null, "System Error: Can't process Score data.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-		
 		return userScore;
 	}
 }

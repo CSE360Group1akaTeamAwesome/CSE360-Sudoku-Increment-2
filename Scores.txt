@@ -1,4 +1,4 @@
 Hello
-4.5 76 Easy 9x9
+3000.0 112 Easy 9x9 1500.0 200 Hard 9x9
 Derelikt
-1.0 96 Easy 9x9
+480000.0 1 Easy 16x16 23990.0 20 Easy 16x16false

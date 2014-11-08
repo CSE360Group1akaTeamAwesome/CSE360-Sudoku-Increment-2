@@ -81,6 +81,7 @@ public class Sign_Up extends JFrame
 				 if(option == JOptionPane.YES_OPTION)
 				 {
 					User user = new User(usernameField.getText(),null,new Score());
+					user.setHasSavedGame(false);
 					MainMenu menu = new MainMenu(1000,800, user);				
 					menu.setSize(1000,800);
 					menu.setVisible(true);

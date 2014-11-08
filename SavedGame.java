@@ -11,7 +11,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-public class SudokuBoard extends JFrame
+public class SavedGame extends JFrame
 {
 	// Private instance variables for features of the board
 	private int  i=0, j=0, counter=0, currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
@@ -21,15 +21,15 @@ public class SudokuBoard extends JFrame
 	private JPanel mainBoard,title,sideBar,timerPanel,fontColorPanel;
 	private JPanel[] regions;
 	private JButton save, check, hint, quit; 
+	private JFrame error;
 	private JTextFieldLimit[][] doc;
 	private Timer timer;
 	private User user;
 	private String difficulty;
 	// Constructor for the new Board
-	public SudokuBoard(int width, int height, String diff, User u)
+	public SavedGame(int width, int height, User u)
 	{
 		user = u;
-		difficulty = diff;
 		this.setBackground(Color.WHITE);
 		
 		this.setLayout(new BorderLayout());
@@ -37,8 +37,8 @@ public class SudokuBoard extends JFrame
 		titleMessage = new JTextPane();
     	
 		title = new JPanel();
-		title.setBackground(Color.WHITE);
 		title.setLayout(new FlowLayout());
+		title.setBackground(Color.WHITE);
 		this.add(title, BorderLayout.NORTH);
 		title.add(titleMessage);
 		
@@ -53,12 +53,6 @@ public class SudokuBoard extends JFrame
     	StyleConstants.setFontSize(messageFont, 32);
     	StyleConstants.setForeground(messageFont, Color.darkGray);
     	StyleConstants.setAlignment(messageFont, StyleConstants.ALIGN_CENTER);
-    	try {
-			doc2.insertString(doc2.getLength(), "Solve this " + difficulty + " Puzzle, " + user.getUsername(), messageFont );
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		this.add(Box.createHorizontalStrut(100), BorderLayout.WEST);
 		this.add(Box.createVerticalStrut(100), BorderLayout.SOUTH);
 		mainBoard = new JPanel();
@@ -90,7 +84,7 @@ public class SudokuBoard extends JFrame
 		    	if(checkPuzzle())
 		    	{
 		    		timer.stop();
-		    		computeStats();	
+		    		computeStats();		
 		    		int reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
 		    		if(reply == JOptionPane.YES_OPTION)
 		    		{
@@ -180,16 +174,25 @@ public class SudokuBoard extends JFrame
 		doc = new JTextFieldLimit[9][9];
 		regions = new JPanel[9];
 		
+		error = new JFrame();
 		
 		// Initialize 3x3 regions
 		for(i = 0; i < 9; i++)
 		{
 			regions[i] = new JPanel();
 			regions[i].setLayout(new GridLayout(3,3));
-			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));mainBoard.add(regions[counter]);
-			counter++;
+			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		}
-	
+		//Initialize mainBoard
+		for(i = 0; i < 3; i++)
+		{
+			for(j = 0; j < 3; j++)
+			{
+				mainBoard.add(regions[counter]);
+				counter++;
+			}
+		}
+		
 		counter = 1;
 		for(i = 0; i < 9; i=i+3)
 		{
@@ -215,7 +218,13 @@ public class SudokuBoard extends JFrame
 				counter++;
 			}
 		}
-		loadPuzzle(difficulty);
+		loadPuzzle();
+		try {
+			doc2.insertString(doc2.getLength(), "Solve this " + difficulty + " Puzzle, " + user.getUsername(), messageFont );
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	boolean checkRow(int row)
@@ -347,7 +356,7 @@ public class SudokuBoard extends JFrame
 				    }
 				    catch (NumberFormatException e) 
 				    {
-				        JOptionPane.showMessageDialog(null, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
+				        JOptionPane.showMessageDialog(error, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
 				        return false;
 				    }
 			}
@@ -356,35 +365,37 @@ public class SudokuBoard extends JFrame
 	}
 	
 	// This should should contain a parameter based on the difficulty of the puzzle
-	void loadPuzzle(String difficulty)
+	void loadPuzzle()
 	{
 		File file;
-		if(difficulty.equals("Easy"))
-		{
-			file = new File("easy9x9.txt");
-		}
-		else if(difficulty.equals("Medium"))
-		{
-			file = new File("medium9x9.txt");
-		}
-		else if(difficulty.equals("Hard"))
-		{
-			file = new File("hard9x9.txt");
-		}
-		else
-		{
-			file = new File("evil9x9.txt");
-		}
+		file = new File("Saved_Games.txt");
 		int i = 0, j = 0, value = 0;
 		Scanner scanner;
+		String line;
+		boolean flag = false, editable = false;
 		try 
 		{
 			scanner = new Scanner(file);
-			
+			while(scanner.hasNextLine() && flag == false)
+			{
+				line = scanner.nextLine();
+				if(line.equals(user.getUsername()))
+				{
+					difficulty = scanner.nextLine();
+					scanner.nextLine();
+					currentTime = Integer.parseInt(scanner.nextLine());
+					flag = true;
+				}
+			}
 			for(i = 0; i < 9; i++)
 			{
 				for(j = 0; j < 9; j++)
 				{
+					if(scanner.next().equals("E"))
+						editable = true;
+					else
+						editable = false;
+					
 					if (scanner.hasNextInt())
 					{
 						value = scanner.nextInt();
@@ -393,8 +404,16 @@ public class SudokuBoard extends JFrame
 							try
 							{
 								entries[i][j].setText(String.valueOf(value));
-								entries[i][j].setForeground(Color.BLUE);
-								entries[i][j].setEditable(false);
+								if(editable == true)
+								{
+									entries[i][j].setForeground(Color.BLACK);
+									entries[i][j].setEditable(editable);
+								}
+								else
+								{
+									entries[i][j].setForeground(Color.BLUE);
+									entries[i][j].setEditable(editable);
+								}
 							}
 							catch(Exception e)
 							{
@@ -425,7 +444,7 @@ public class SudokuBoard extends JFrame
 		user.getScore().setLastSize("9x9");
 		user.getScore().calculateScore();
 		user.getScore().displayLatestStats();
-		user.setSavedGameSize("9x9");
+		user.setHasSavedGame(false);
 		saveScoreStats();
 		
 	}
@@ -505,6 +524,7 @@ public class SudokuBoard extends JFrame
 				}
 				
 			}
+			
 			MainMenu menu = new MainMenu(1000,800, user);
 			menu.setSize(1000,800);
 			menu.setVisible(true);

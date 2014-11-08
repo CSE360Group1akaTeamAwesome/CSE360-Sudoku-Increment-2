@@ -25,7 +25,7 @@ public class Profile extends JFrame
 		user = u;
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new FlowLayout());
-		viewLastScore = new JButton("View Current Game Data");
+		viewLastScore = new JButton("View Latest Game Data");
 		viewLastScore.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -36,7 +36,8 @@ public class Profile extends JFrame
 				}
 				else
 				{
-					JOptionPane.showMessageDialog(null,"User: " + user.getUsername() + "\n" + user.getScore().getLastDifficulty() +" " + user.getScore().getLastSize()+ " Puzzle solved in " + user.getScore().getCurrentTime()+"\nScore: " + user.getScore().getCurrentScore(),"Latest Game Results",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null,"User: " + user.getUsername() + "\n" + user.getScore().getLastDifficulty() +" " + user.getScore().getLastSize()+ " Puzzle solved in " 
+												+ user.getScore().getCurrentTime()+" seconds"+ "\nScore: " + user.getScore().getCurrentScore(),"Latest Game Results",JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 					

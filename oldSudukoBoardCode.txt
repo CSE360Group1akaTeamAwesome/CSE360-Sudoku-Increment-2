@@ -21,6 +21,7 @@ public class SudokuBoard extends JFrame
 	private JPanel mainBoard,title,sideBar,timerPanel,fontColorPanel;
 	private JPanel[] regions;
 	private JButton save, check, hint, quit; 
+	private JFrame error;
 	private JTextFieldLimit[][] doc;
 	private Timer timer;
 	private User user;
@@ -90,17 +91,8 @@ public class SudokuBoard extends JFrame
 		    	if(checkPuzzle())
 		    	{
 		    		timer.stop();
-		    		computeStats();	
-		    		int reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
-		    		if(reply == JOptionPane.YES_OPTION)
-		    		{
-			    		MainMenu menu = new MainMenu(1000,800, user);
-						menu.setSize(1000,800);
-						menu.setVisible(true);
-						menu.setTitle("CSE360 Sudoku Main Menu");
-						
-					}
-		    		dispose();
+		    		computeStats();		
+		    		backToMenu();
 		    	}
 		    	else
 		    	{
@@ -180,41 +172,194 @@ public class SudokuBoard extends JFrame
 		doc = new JTextFieldLimit[9][9];
 		regions = new JPanel[9];
 		
+		error = new JFrame();
 		
 		// Initialize 3x3 regions
 		for(i = 0; i < 9; i++)
 		{
 			regions[i] = new JPanel();
 			regions[i].setLayout(new GridLayout(3,3));
-			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));mainBoard.add(regions[counter]);
-			counter++;
+			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		}
-	
-		counter = 1;
-		for(i = 0; i < 9; i=i+3)
+		//Initialize mainBoard
+		for(i = 0; i < 3; i++)
 		{
-			for(j = 0; j < 9; j=j+3)
+			for(j = 0; j < 3; j++)
 			{
-				for(int k = i; k < i + 3; k++)
-				{
-					for(int l = j; l < j + 3; l++)
-					{
-						entries[k][l] = new JTextField(String.valueOf(counter));
-						entries[k][l].setHorizontalAlignment(JTextField.CENTER);
-						doc[k][l] = new JTextFieldLimit(1);
-						try {
-							doc[k][l].insertString(doc[k][l].getLength(), String.valueOf(counter), tileFont);
-						} catch (BadLocationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						entries[k][l].setDocument(doc[k][l]);
-						regions[counter-1].add(entries[k][l]);
-					}
-				}
+				mainBoard.add(regions[counter]);
 				counter++;
 			}
 		}
+		
+		// Initialize each region[0]
+		for(i = 0; i < 3; i++)
+		{
+			
+			for(j = 0; j < 3; j++)
+			{
+				entries[i][j] = new JTextField("1");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "1", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[0].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[1]
+		for(i = 0; i < 3; i++)
+		{					
+			for(j = 3; j < 6; j++)
+			{
+				entries[i][j] = new JTextField("2");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "2", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[1].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[2]
+		for(i = 0; i < 3; i++)
+		{					
+			for(j = 6; j < 9; j++)
+			{
+				entries[i][j] = new JTextField("3");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "3", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[2].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[3]
+		for(i = 3; i < 6; i++)
+		{					
+			for(j = 0; j < 3; j++)
+			{
+				entries[i][j] = new JTextField("4");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "4", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[3].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[4]
+		for(i = 3; i < 6; i++)
+		{					
+			for(j = 3; j < 6; j++)
+			{
+				entries[i][j] = new JTextField("5");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "5", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[4].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[5]
+		for(i = 3; i < 6; i++)
+		{					
+			for(j = 6; j < 9; j++)
+			{
+				entries[i][j] = new JTextField("6");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "6", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[5].add(entries[i][j]);
+			}
+		}
+		
+		// Initialize each region[6]
+		for(i = 6; i < 9; i++)
+		{					
+			for(j = 0; j < 3; j++)
+			{
+				entries[i][j] = new JTextField("7");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "7", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[6].add(entries[i][j]);
+			}
+		}
+		// Initialize each region[7]
+		for(i = 6; i < 9; i++)
+		{					
+			for(j = 3; j < 6; j++)
+			{
+				entries[i][j] = new JTextField("8");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "8", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+				regions[7].add(entries[i][j]);
+			}
+		}
+		// Initialize each region[7]
+		for(i = 6; i < 9; i++)
+		{					
+			for(j = 6; j < 9; j++)
+				{
+				entries[i][j] = new JTextField("9");
+				entries[i][j].setHorizontalAlignment(JTextField.CENTER);
+				doc[i][j] = new JTextFieldLimit(1);
+				try {
+					doc[i][j].insertString(doc[i][j].getLength(), "9", tileFont);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				entries[i][j].setDocument(doc[i][j]);
+					regions[8].add(entries[i][j]);
+				}
+			}
 		loadPuzzle(difficulty);
 	}
 	
@@ -347,7 +492,7 @@ public class SudokuBoard extends JFrame
 				    }
 				    catch (NumberFormatException e) 
 				    {
-				        JOptionPane.showMessageDialog(null, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
+				        JOptionPane.showMessageDialog(error, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
 				        return false;
 				    }
 			}
@@ -425,6 +570,8 @@ public class SudokuBoard extends JFrame
 		user.getScore().setLastSize("9x9");
 		user.getScore().calculateScore();
 		user.getScore().displayLatestStats();
+		if(user.isGameSaved() == false)
+			user.setHasSavedGame(true);
 		user.setSavedGameSize("9x9");
 		saveScoreStats();
 		
@@ -453,9 +600,7 @@ public class SudokuBoard extends JFrame
 				if(iterator.next().equals(user.getUsername()))
 				{
 					iterator.next();
-					iterator.set(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize()+ " "
-							+ user.getScore().getCurrentScore()	+ " " + String.valueOf(user.getScore().getCurrentTime())
-							+ " " + user.getScore().getLastDifficulty() + " " + user.getScore().getLastSize() + String.valueOf(user.isGameSaved()));
+					iterator.set( String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize());
 					flag = true;
 					break;
 				}
@@ -494,16 +639,16 @@ public class SudokuBoard extends JFrame
 			{
 				saveGame();
 				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
-				reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
-				if(reply == JOptionPane.YES_OPTION)
-				{
-					ShowSolution solution = new ShowSolution("easy9x9Solution.txt");
-					solution.setSize(500,500);
-					solution.setTitle("Solution");
-					solution.setVisible(true);
-					solution.setResizable(false);
-				}
 				
+			}
+			reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
+			if(reply == JOptionPane.YES_OPTION)
+			{
+				ShowSolution solution = new ShowSolution("easy9x9Solution.txt");
+				solution.setSize(500,500);
+				solution.setTitle("Solution");
+				solution.setVisible(true);
+				solution.setResizable(false);
 			}
 			MainMenu menu = new MainMenu(1000,800, user);
 			menu.setSize(1000,800);

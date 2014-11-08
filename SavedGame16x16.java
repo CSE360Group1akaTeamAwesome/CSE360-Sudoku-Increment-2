@@ -11,32 +11,25 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-public class SudokuBoard extends JFrame
-{
-	// Private instance variables for features of the board
-	private int  i=0, j=0, counter=0, currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
-	private JTextPane titleMessage,possibleValues;
+
+public class SavedGame16x16 extends JFrame{
+
 	private JTextField[][] entries;
-	private JTextField timeDisplay;
-	private JPanel mainBoard,title,sideBar,timerPanel,fontColorPanel;
-	private JPanel[] regions;
-	private JButton save, check, hint, quit; 
-	private JTextFieldLimit[][] doc;
-	private Timer timer;
+	private int  currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
 	private User user;
 	private String difficulty;
-	// Constructor for the new Board
-	public SudokuBoard(int width, int height, String diff, User u)
+	private JTextField timeDisplay;
+	private Timer timer;
+	public SavedGame16x16(int width, int height, User u)
 	{
 		user = u;
-		difficulty = diff;
 		this.setBackground(Color.WHITE);
 		
 		this.setLayout(new BorderLayout());
 		
-		titleMessage = new JTextPane();
+		JTextPane titleMessage = new JTextPane();
     	
-		title = new JPanel();
+		JPanel title = new JPanel();
 		title.setBackground(Color.WHITE);
 		title.setLayout(new FlowLayout());
 		this.add(title, BorderLayout.NORTH);
@@ -53,27 +46,22 @@ public class SudokuBoard extends JFrame
     	StyleConstants.setFontSize(messageFont, 32);
     	StyleConstants.setForeground(messageFont, Color.darkGray);
     	StyleConstants.setAlignment(messageFont, StyleConstants.ALIGN_CENTER);
-    	try {
-			doc2.insertString(doc2.getLength(), "Solve this " + difficulty + " Puzzle, " + user.getUsername(), messageFont );
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	
 		this.add(Box.createHorizontalStrut(100), BorderLayout.WEST);
 		this.add(Box.createVerticalStrut(100), BorderLayout.SOUTH);
-		mainBoard = new JPanel();
+		JPanel mainBoard = new JPanel();
 		this.add(mainBoard, BorderLayout.CENTER);
-		mainBoard.setLayout(new GridLayout(3,3));
+		mainBoard.setLayout(new GridLayout(4,4));
 		mainBoard.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		
-		sideBar = new JPanel();
+		JPanel sideBar = new JPanel();
 		sideBar.setLayout(new GridLayout(5,1));
-		possibleValues = new JTextPane();
+		JTextPane possibleValues = new JTextPane();
 		possibleValues.setText("Enter possible Values Below");
 		possibleValues.setEditable(true);
 		sideBar.add(possibleValues);
-		save = new JButton("Save Puzzle");
+		JButton save = new JButton("Save Puzzle");
 		save.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -82,7 +70,7 @@ public class SudokuBoard extends JFrame
 				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
 		    }
 		});
-		check = new JButton("Check Puzzle");
+		JButton check = new JButton("Check Puzzle");
 		check.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -98,7 +86,6 @@ public class SudokuBoard extends JFrame
 						menu.setSize(1000,800);
 						menu.setVisible(true);
 						menu.setTitle("CSE360 Sudoku Main Menu");
-						
 					}
 		    		dispose();
 		    	}
@@ -108,7 +95,7 @@ public class SudokuBoard extends JFrame
 		    	}
 		    }
 		});
-		hint = new JButton("Hint");
+		JButton hint = new JButton("Hint");
 		hint.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -117,7 +104,7 @@ public class SudokuBoard extends JFrame
 		    	numberOfHints++;
 		    }
 		});
-		quit = new JButton("Quit Puzzle");
+		JButton quit = new JButton("Quit Puzzle");
 		quit.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -131,7 +118,7 @@ public class SudokuBoard extends JFrame
 		sideBar.add(quit);
 		this.add(sideBar,BorderLayout.EAST);
 		
-		fontColorPanel = new JPanel();
+		JPanel fontColorPanel = new JPanel();
 		String[] colors = {"Black","Cyan","Green","Magenta", "Orange", "Pink","Red", "Yellow" };
 		final JComboBox colorList = new JComboBox(colors);
 		colorList.addActionListener(new ActionListener() {
@@ -146,12 +133,12 @@ public class SudokuBoard extends JFrame
 		fontColorPanel.setLayout(new BoxLayout(fontColorPanel, BoxLayout.Y_AXIS));
 		fontColorPanel.add(colorSelectPrompt);
 		fontColorPanel.add(colorList);
-		fontColorPanel.add(Box.createRigidArea(new Dimension(0,700)));
+		fontColorPanel.add(Box.createRigidArea(new Dimension(0,900)));
 		fontColorPanel.setBackground(Color.WHITE);
 		
 		this.add(fontColorPanel, BorderLayout.WEST);
 		
-		timerPanel = new JPanel();
+		JPanel timerPanel = new JPanel();
 		timerPanel.setLayout(new BoxLayout(timerPanel, BoxLayout.X_AXIS));
 		timerPanel.setBackground(Color.WHITE);
 		timeDisplay = new JTextField();
@@ -176,34 +163,34 @@ public class SudokuBoard extends JFrame
 		this.add(timerPanel, BorderLayout.SOUTH);
 		
 		
-		entries = new JTextField[9][9];
-		doc = new JTextFieldLimit[9][9];
-		regions = new JPanel[9];
+		entries = new JTextField[16][16];
+		JTextFieldLimit [][] doc = new JTextFieldLimit[16][16];
+		JPanel [] regions = new JPanel[16];
 		
-		
-		// Initialize 3x3 regions
-		for(i = 0; i < 9; i++)
+		int i = 0, j = 0, k = 0, l = 0, counter = 0;
+		// Initialize 4x4 regions on mainboard
+		for(i = 0; i < 16; i++)
 		{
 			regions[i] = new JPanel();
-			regions[i].setLayout(new GridLayout(3,3));
-			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));mainBoard.add(regions[counter]);
+			regions[i].setLayout(new GridLayout(4,4));
+			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
+			mainBoard.add(regions[counter]);
 			counter++;
 		}
-	
 		counter = 1;
-		for(i = 0; i < 9; i=i+3)
+		for(i = 0; i < 16; i=i+4)
 		{
-			for(j = 0; j < 9; j=j+3)
+			for(j = 0; j < 16; j=j+4)
 			{
-				for(int k = i; k < i + 3; k++)
+				for(k = i; k < i + 4; k++)
 				{
-					for(int l = j; l < j + 3; l++)
+					for(l = j; l < j + 4; l++)
 					{
-						entries[k][l] = new JTextField(String.valueOf(counter));
+						entries[k][l] = new JTextField(String.valueOf(counter%9));
 						entries[k][l].setHorizontalAlignment(JTextField.CENTER);
 						doc[k][l] = new JTextFieldLimit(1);
 						try {
-							doc[k][l].insertString(doc[k][l].getLength(), String.valueOf(counter), tileFont);
+							doc[k][l].insertString(doc[k][l].getLength(), String.valueOf(counter%9), tileFont);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -215,18 +202,51 @@ public class SudokuBoard extends JFrame
 				counter++;
 			}
 		}
-		loadPuzzle(difficulty);
+		loadPuzzle();
+		try {
+			doc2.insertString(doc2.getLength(), "Solve this " + difficulty + " Puzzle, " + user.getUsername(), messageFont );
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
 	boolean checkRow(int row)
 	{
+		String checker = "";
 		int i = 0, j = 0, count = 0;
-		for(i = 1; i < 10; i++)
+		for(i = 1; i < 17; i++)
 		{	
-			count = 0;
-			for(j = 0; j < 9; j++)
+			switch(i)
 			{
-				if(i == Integer.parseInt(entries[row][j].getText()) )
+				case 10:
+					checker = "A";
+					break;
+				case 11:
+					checker = "B";
+					break;
+				case 12:
+					checker = "C";
+					break;
+				case 13:
+					checker = "D";
+					break;
+				case 14:
+					checker = "E";
+					break;
+				case 15:
+					checker = "F";
+					break;
+				case 16:
+					checker = "G";
+					break;
+				default:
+					checker = String.valueOf(i);
+					break;
+			}
+			count = 0;
+			for(j = 0; j < 16; j++)
+			{
+				if(checker.equals(entries[row][j].getText()) )
 				{
 					count++;
 				}
@@ -242,14 +262,41 @@ public class SudokuBoard extends JFrame
 		return true;
 	}
 	boolean checkColumn(int col)
-	{
+	{	String checker = "";
 		int i = 0, j = 0, count = 0;
-		for(j = 0; j < 10; j++)
+		for(j = 0; j < 17; j++)
 		{
-			count = 0;
-			for(i = 0; i < 9; i++)
+			switch(j)
 			{
-				if(j == Integer.parseInt(entries[i][col].getText()) )
+				case 10:
+					checker = "A";
+					break;
+				case 11:
+					checker = "B";
+					break;
+				case 12:
+					checker = "C";
+					break;
+				case 13:
+					checker = "D";
+					break;
+				case 14:
+					checker = "E";
+					break;
+				case 15:
+					checker = "F";
+					break;
+				case 16:
+					checker = "G";
+					break;
+				default:
+					checker = String.valueOf(j);
+					break;
+			}
+			count = 0;
+			for(i = 0; i < 16; i++)
+			{
+				if(checker.equals(entries[i][col].getText()) )
 				{
 					count++;
 				}
@@ -266,16 +313,44 @@ public class SudokuBoard extends JFrame
 	}
 	boolean checkBox(int row, int col)
 	{
+		String checker = "";
 		int i = 0, j = 0, k = 0, count = 0;
-		for(k = 1; k < 10; k++)
+		for(k = 1; k < 17; k++)
 		{
-			for(i = row; i < row+3; i++)
+			switch(k)
 			{
-				for(j = col; j < col+3; j++)
+				case 10:
+					checker = "A";
+					break;
+				case 11:
+					checker = "B";
+					break;
+				case 12:
+					checker = "C";
+					break;
+				case 13:
+					checker = "D";
+					break;
+				case 14:
+					checker = "E";
+					break;
+				case 15:
+					checker = "F";
+					break;
+				case 16:
+					checker = "G";
+					break;
+				default:
+					checker = String.valueOf(k);
+					break;
+			}
+			for(i = row; i < row+4; i++)
+			{
+				for(j = col; j < col+4; j++)
 				{	
 					count = 0;
 					
-						if(k == Integer.parseInt(entries[i][j].getText()) )
+						if(checker.equals(entries[i][j].getText()) )
 						{
 							count++;
 						}
@@ -297,7 +372,7 @@ public class SudokuBoard extends JFrame
 		int i = 0, j = 0;
 		for(i = 0; i < 9; i++)
 		{
-			for(j = 0; j < 9; j++)
+			for(j = 0; j < 16; j++)
 			{	
 				if(entries[i][j].getText().equals(""))
 				{
@@ -315,11 +390,7 @@ public class SudokuBoard extends JFrame
 		{
 			return false;
 		}
-		if(!validateInput())
-		{
-			return false;
-		}
-		for(i = 0; i < 9; i++)
+		for(i = 0; i < 16; i++)
 		{
 			if(checkRow(i) == false || checkColumn(i) == false)
 			{
@@ -327,74 +398,61 @@ public class SudokuBoard extends JFrame
 			}
 		}
 		
-		if(!checkBox(0,0)||!checkBox(0,3)||!checkBox(0,6)||!checkBox(3,0)||!checkBox(3,3)||!checkBox(3,6)||!checkBox(6,0)||!checkBox(6,3)||!checkBox(6,6))
+		if(!checkBox(0,0)||!checkBox(0,4)||!checkBox(0,8)||!checkBox(0,12)||!checkBox(4,0)||!checkBox(4,4)||!checkBox(4,8)||!checkBox(4,12)||!checkBox(8,0)||!checkBox(8,4)||!checkBox(8,8)||!checkBox(8,12)||!checkBox(12,0)||!checkBox(12,4)||!checkBox(12,8)||!checkBox(12,12))
 			return false;
 		
 		return true;
 	}
-	
-	boolean validateInput()
-	{
-		int i = 0, j = 0;
-		for(i = 0; i < 9; i++)
-		{
-			for(j = 0; j < 9; j++)
-			{
-				    try 
-				    {
-				    	
-				        Integer.parseInt(entries[i][j].getText());
-				    }
-				    catch (NumberFormatException e) 
-				    {
-				        JOptionPane.showMessageDialog(null, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
-				        return false;
-				    }
-			}
-		}
-		return true;
-	}
-	
 	// This should should contain a parameter based on the difficulty of the puzzle
-	void loadPuzzle(String difficulty)
+	void loadPuzzle()
 	{
 		File file;
-		if(difficulty.equals("Easy"))
-		{
-			file = new File("easy9x9.txt");
-		}
-		else if(difficulty.equals("Medium"))
-		{
-			file = new File("medium9x9.txt");
-		}
-		else if(difficulty.equals("Hard"))
-		{
-			file = new File("hard9x9.txt");
-		}
-		else
-		{
-			file = new File("evil9x9.txt");
-		}
-		int i = 0, j = 0, value = 0;
+		file = new File("Saved_Games.txt");
+		int i = 0, j = 0;
 		Scanner scanner;
+		String line, value;
+		boolean flag = false, editable = false;
 		try 
 		{
 			scanner = new Scanner(file);
-			
-			for(i = 0; i < 9; i++)
+			while(scanner.hasNextLine() && flag == false)
 			{
-				for(j = 0; j < 9; j++)
+				line = scanner.nextLine();
+				if(line.equals(user.getUsername()))
 				{
-					if (scanner.hasNextInt())
+					difficulty = scanner.nextLine();
+					scanner.nextLine();
+					currentTime = Integer.parseInt(scanner.nextLine());
+					flag = true;
+				}
+			}
+			for(i = 0; i < 16; i++)
+			{
+				for(j = 0; j < 16; j++)
+				{
+					if(scanner.next().equals("E"))
+						editable = true;
+					else
+						editable = false;
+					
+					if (scanner.hasNext())
 					{
-						value = scanner.nextInt();
-						if(value != 0)
+						value = scanner.next();
+						if(!value.equals("0"))
 						{
 							try
 							{
 								entries[i][j].setText(String.valueOf(value));
-								entries[i][j].setForeground(Color.BLUE);
-								entries[i][j].setEditable(false);
+								if(editable == true)
+								{
+									entries[i][j].setForeground(Color.BLACK);
+									entries[i][j].setEditable(editable);
+								}
+								else
+								{
+									entries[i][j].setForeground(Color.BLUE);
+									entries[i][j].setEditable(editable);
+								}
 							}
 							catch(Exception e)
 							{
@@ -422,10 +480,10 @@ public class SudokuBoard extends JFrame
 		user.getScore().setCurrentTime(currentTime);
 		user.getScore().setNumberOfHints(numberOfHints);
 		user.getScore().setLastDifficulty(difficulty);
-		user.getScore().setLastSize("9x9");
+		user.getScore().setLastSize("16x16");
 		user.getScore().calculateScore();
 		user.getScore().displayLatestStats();
-		user.setSavedGameSize("9x9");
+		user.setSavedGameSize("16x16");
 		saveScoreStats();
 		
 	}
@@ -533,9 +591,9 @@ public class SudokuBoard extends JFrame
 		else 
 			fontColor = Color.YELLOW;
 		
-		for(i = 0; i < 9; i++)
+		for(i = 0; i < 16; i++)
 		{
-			for(j = 0; j < 9; j++)
+			for(j = 0; j < 16; j++)
 			{
 				if(entries[i][j].isEditable() && entries[i][j].getText().equals(""))
 				{
@@ -570,7 +628,7 @@ public class SudokuBoard extends JFrame
 					iterator.next();
 					iterator.set(difficulty);
 					iterator.next();
-					iterator.set("9x9");
+					iterator.set("16x16");
 					iterator.next();
 					iterator.set(String.valueOf(currentTime));
 					if(iterator.hasNext())
@@ -591,7 +649,7 @@ public class SudokuBoard extends JFrame
 			{
 				data.add(user.getUsername());
 				data.add(difficulty);
-				data.add("9x9");
+				data.add("16x16");
 				data.add(String.valueOf(currentTime));
 				data.add(currentPuzzle);
 			}
@@ -618,9 +676,9 @@ public class SudokuBoard extends JFrame
 	{
 		String currentPuzzle = "";
 		int i = 0, j = 0;
-		for(i = 0; i < 9; i++)
+		for(i = 0; i < 16; i++)
 		{
-			for(j = 0; j < 9; j++)
+			for(j = 0; j < 16; j++)
 			{
 				if(entries[i][j].isEditable())
 				{

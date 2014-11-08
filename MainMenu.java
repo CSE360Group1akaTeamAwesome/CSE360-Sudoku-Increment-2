@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -96,12 +99,29 @@ public class MainMenu extends JFrame
 	    savedGame.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent ae)
 	    	{
-	    		SudokuBoard board = new SudokuBoard(1000,850, "Easy", user);
-	    		board.setVisible(true);
-	    		board.setTitle("Sudoku Puzzle");
-	    		board.setSize(1000,850);
-	    		board.setResizable(false);
-	    		dispose();
+	    		if(user.isGameSaved() || findSavedGameSize().equals("9x9") || findSavedGameSize().equals("16x16"))
+	    		{
+	    			if(findSavedGameSize().equals("9x9"))
+	    			{
+			    		SavedGame board = new SavedGame(1000,850, user);
+			    		board.setVisible(true);
+			    		board.setTitle("Saved Sudoku Puzzle");
+			    		board.setSize(1000,850);
+			    		board.setResizable(false);
+			    		dispose();
+	    			}
+	    			else
+	    			{
+	    				SavedGame16x16 board = new SavedGame16x16(1000,850, user);
+			    		board.setVisible(true);
+			    		board.setTitle("Saved Sudoku Puzzle");
+			    		board.setSize(1100,950);
+			    		board.setResizable(false);
+			    		dispose();
+	    			}
+	    		}
+	    		else
+	    			 JOptionPane.showMessageDialog(null, user.getUsername()+" has no saved game.","Error", JOptionPane.ERROR_MESSAGE);
 	    	}
 	    });
 	    viewProfile.addActionListener(new ActionListener() {
@@ -134,6 +154,33 @@ public class MainMenu extends JFrame
 	{
 		Select_Board selectBoard = new Select_Board(500,100, user);
 		dispose();
+	}
+	public String findSavedGameSize()
+	{
+		File file;
+		file = new File("Saved_Games.txt");
+		Scanner scanner;
+		String line;
+		try 
+		{
+			scanner = new Scanner(file);
+			while(scanner.hasNextLine())
+			{
+				line = scanner.nextLine();
+				if(line.equals(user.getUsername()))
+				{
+					scanner.nextLine();
+					return scanner.nextLine();
+					
+				}
+			}
+			scanner.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not load puzzle. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		return "";
 	}
 	
 }

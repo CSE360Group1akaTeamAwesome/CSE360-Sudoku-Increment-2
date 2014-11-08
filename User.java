@@ -2,14 +2,18 @@
 public class User
 {
 	private String username;
-	Score userScore;
+	private Score userScore;
 	private SudokuBoard savedGame;
+	private boolean hasSavedGame;
+	private String savedGameSize;
 	
 	public User(String name, SudokuBoard game, Score score)
 	{
 		username = name;
 		savedGame = game;
 		userScore = score;
+		hasSavedGame = false;
+		savedGameSize = "";
 	}
 	
 	public void setUsername(String newName)
@@ -26,6 +30,14 @@ public class User
 	{
 		userScore = score;
 	}
+	public void setHasSavedGame(boolean bool)
+	{
+		hasSavedGame = bool;
+	}
+	public void setSavedGameSize(String size)
+	{
+		savedGameSize = size;
+	}
 	public String getUsername()
 	{
 		return username;
@@ -38,7 +50,14 @@ public class User
 	{
 		return userScore;
 	}
-	
+	public boolean isGameSaved()
+	{
+		return hasSavedGame;
+	}
+	public String getSavedGameSize()
+	{
+		return savedGameSize;
+	}
 	//public void display_highscore()
 	// Should show time, score, size, and difficulty
 	

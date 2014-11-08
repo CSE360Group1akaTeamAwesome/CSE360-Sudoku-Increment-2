@@ -33,32 +33,62 @@ public class Select_Board extends JFrame
 			}
 			if(difficulty != 0 && size != 0)
 			{
-				SudokuBoard board;
-				switch(difficulty)
+				if(size == 1)
 				{
-					case 1:
-						board = new SudokuBoard(1000,850, "Easy", user);
-						board.setTitle("Easy Sudoku Puzzle");
-						break;	
-					case 2:
-						board = new SudokuBoard(1000,850, "Medium", user);
-						board.setTitle("Medium Sudoku Puzzle");
-						break;
-					case 3:
-						board = new SudokuBoard(1000,850, "Hard",user);
-						board.setTitle("Hard Sudoku Puzzle");
-						break;
-					default:
-						board = new SudokuBoard(1000,850, "Evil",user);
-						board.setTitle("Evil Sudoku Puzzle");
-						break;
+					SudokuBoard board;
+					switch(difficulty)
+					{
+						case 1:
+							board = new SudokuBoard(1000,850, "Easy", user);
+							board.setTitle("Easy Sudoku Puzzle");
+							break;	
+						case 2:
+							board = new SudokuBoard(1000,850, "Medium", user);
+							board.setTitle("Medium Sudoku Puzzle");
+							break;
+						case 3:
+							board = new SudokuBoard(1000,850, "Hard",user);
+							board.setTitle("Hard Sudoku Puzzle");
+							break;
+						default:
+							board = new SudokuBoard(1000,850, "Evil",user);
+							board.setTitle("Evil Sudoku Puzzle");
+							break;
+					}
+					board.setVisible(true);
+					board.setTitle("Sudoku Puzzle");
+					board.setSize(1000,850);
+					board.setResizable(false);
+					diposeFrame();
 				}
-				
-				board.setVisible(true);
-				board.setTitle("Sudoku Puzzle");
-				board.setSize(1000,850);
-				board.setResizable(false);
-				diposeFrame();
+				else
+				{
+					SudokuBoard16x16 board;
+					switch(difficulty)
+					{
+						case 1:
+							board = new SudokuBoard16x16(1000,850, "Easy", user);
+							board.setTitle("Easy Sudoku Puzzle");
+							break;	
+						case 2:
+							board = new SudokuBoard16x16(1000,850, "Medium", user);
+							board.setTitle("Medium Sudoku Puzzle");
+							break;
+						case 3:
+							board = new SudokuBoard16x16(1000,850, "Hard",user);
+							board.setTitle("Hard Sudoku Puzzle");
+							break;
+						default:
+							board = new SudokuBoard16x16(1000,850, "Evil",user);
+							board.setTitle("Evil Sudoku Puzzle");
+							break;
+					}	
+					board.setVisible(true);
+					board.setTitle("Sudoku Puzzle");
+					board.setSize(1100,950);
+					board.setResizable(false);
+					diposeFrame();
+				}
 			}
 	
 		}
