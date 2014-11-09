@@ -53,6 +53,7 @@ public class LogIn extends JFrame
 		   if(loadUser(username.getText(), new String(password.getPassword()) ) )
 		   { 
 				User user = new User(username.getText(),null,findScore(username.getText()));
+				user.setHasSavedGame(userHasGamedSaved(user));
 			    MainMenu menu = new MainMenu(1000,800, user);
 				menu.setSize(1000,800);
 				menu.setVisible(true);
@@ -89,7 +90,7 @@ public class LogIn extends JFrame
 			return false;
 		}
 		catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "System Error: Can't find User data.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "System Error: Can't find User file.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		catch(Exception a)
@@ -145,5 +146,48 @@ public class LogIn extends JFrame
 			JOptionPane.showMessageDialog(null, "System Error: Can't process Score data.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		return userScore;
+	}
+	public boolean userHasGamedSaved(User user)
+	{
+		File file = new File("Users.txt");
+		Scanner scanner;
+		try {
+			scanner = new Scanner(file);
+			while (scanner.hasNextLine())
+			{
+			   String lineFromFile = scanner.nextLine();
+			   if(lineFromFile.contains(user.getUsername()))
+			   { 
+			      lineFromFile = scanner.nextLine();
+			      if(scanner.hasNextLine())
+			      {
+			    	  lineFromFile = scanner.nextLine();
+			    	  if(lineFromFile.equals("true"))
+			    	  {
+			    		  scanner.close();
+				    	  return true;
+			    	  }
+			    	  else
+			    	  {
+				    	  scanner.close();
+				    	  return false;
+			    	  }
+			    	  
+			      }
+			   }
+			}
+			scanner.close();
+			return false;
+		}
+		catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "System Error: Can't find User File.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		catch(Exception a)
+		{
+			JOptionPane.showMessageDialog(null, "System Error: Can't find User Saved Game Info.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 	}
 }

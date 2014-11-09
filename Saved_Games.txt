@@ -1,10 +1,10 @@
 Hello
-Easy
-9x9
-44
-E 0 E 0 E 0 E 0 E 0 E 0 E 0 N 7 N 1 N 3 E 0 E 0 E 0 N 8 E 0 E 0 N 5 N 9 E 0 E 0 E 0 E 0 N 2 E 0 N 8 E 0 E 0 E 0 E 0 N 2 E 0 E 0 E 0 N 9 N 1 E 0 E 0 E 0 E 0 N 6 E 0 E 0 E 0 E 0 N 3 N 7 E 0 E 0 E 0 N 4 E 0 E 0 E 0 E 0 E 0 N 4 E 0 N 9 E 0 E 0 E 0 N 3 N 2 E 0 N 5 E 0 E 0 N 7 E 0 E 0 N 4 N 8 E 0 N 2 E 0 N 3 E 0 E 0 N 6 E 0 E 0 
+Evil
+16x16
+2
+E 0 N C N 6 E 0 E 0 N D N 2 E 0 E 0 E 0 N A E 0 E 0 E 0 N 9 E 0 E 0 E 0 N 8 N E E 0 N 9 E 0 E 0 E 0 N 2 E 0 N 5 E 0 E 0 E 0 N B E 0 N 4 E 0 E 0 N C E 0 E 0 N F N 6 E 0 N 9 E 0 N D E 0 N 1 N A E 0 E 0 N 9 E 0 N 3 N G N 7 E 0 E 0 N E E 0 N 4 E 0 E 0 E 0 E 0 N 8 E 0 N F E 0 E 0 E 0 N 5 E 0 E 0 E 0 E 0 E 0 E 0 N D E 0 N 1 E 0 E 0 E 0 N 5 E 0 N 3 E 0 N C N G E 0 E 0 E 0 E 0 E 0 N 2 N 6 N A E 0 N 4 E 0 E 0 N 1 E 0 E 0 N 5 N D N 6 E 0 N C N E E 0 E 0 N 1 E 0 N G N 9 N 4 E 0 E 0 N 6 E 0 E 0 E 0 E 0 E 0 N B E 0 N 3 N C E 0 N A E 0 E 0 E 0 E 0 E 0 N 1 E 0 E 0 N E N 5 N F E 0 N 2 E 0 E 0 N E N D E 0 N 6 N C N 1 E 0 E 0 N 2 E 0 E 0 N 4 E 0 N 8 N 3 N 8 E 0 E 0 E 0 E 0 E 0 N A N 4 N C N B E 0 N E E 0 E 0 E 0 N 2 E 0 N 5 E 0 E 0 E 0 E 0 E 0 E 0 N F E 0 E 0 E 0 N A E 0 N C E 0 E 0 E 0 E 0 N 6 E 0 N B E 0 E 0 N A N 5 N F E 0 N C E 0 E 0 N E N 5 E 0 N G E 0 N F E 0 N 8 N 2 E 0 E 0 N D E 0 E 0 N B E 0 N B E 0 E 0 E 0 N D E 0 N 3 E 0 E 0 E 0 N G E 0 N 9 N 2 E 0 E 0 E 0 N D E 0 E 0 E 0 N C E 0 E 0 E 0 N B N E E 0 E 0 N 3 N 8 E 0 
 Derelikt
 Easy
 16x16
-17
+1
 N 5 N C N 7 N 2 N 3 N E N 1 N 8 N B N G N D N 6 N 9 N A N F N 4 N 3 N 4 N E N B N 9 N 2 N A N F N 1 N 8 N 7 N C N G N 5 N 6 N D N A N 9 N 8 N F N B N D N 6 N G N 2 N E N 5 N 4 N C N 7 N 3 N 1 N D N G N 6 N 1 N 5 N 7 N 4 N C N 3 N A N F N 9 N E N 8 N 2 N B N 4 N B N 2 N D N 7 N A N G N 9 N 5 N 6 N 8 N F N 3 N E N 1 N C N 8 N 6 N 5 N A N 4 N C N E N B N G N 7 N 1 N 3 N F N D N 9 N 2 N 1 N F N 3 N 9 N 6 N 5 N 2 N D N C N 4 N B N E N 7 N G N A N 8 N E N 7 N G N C N 1 N F N 8 N 3 N 9 N D N 2 N A N 5 N 4 N B N 6 N G N 1 N 4 N 7 N C N B N 3 N A N 6 N F N E N 8 N 2 N 9 N D N 5 N C N 5 N A N 8 N 2 N 4 N 9 N 6 N D N 3 N G N B N 1 N F N 7 N E N F N 3 N D N 6 N 8 N 1 N 5 N E N 7 N C N 9 N 2 N A N B N 4 N G N B N 2 N 9 N E N F N G N D N 7 N A N 5 N 4 N 1 N 6 N C N 8 N 3 N 2 N A N C N G N D N 8 N 7 N 1 N 4 N 9 N 3 N 5 N B N 6 N E N F N 6 N 8 N F N 3 N A N 9 N B N 5 N E N 2 N C N D N 4 N 1 N G N 7 N 9 N E N B N 5 N G N 3 N F N 4 N 8 N 1 N 6 N 7 N D N 2 N C N A N 7 N D N 1 N 4 N E N 6 N C N 2 N F N B N A N G N 8 N 3 N 5 N 9 

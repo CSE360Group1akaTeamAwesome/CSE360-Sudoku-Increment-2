@@ -204,10 +204,12 @@ public class Profile extends JFrame
 	{
 		File file = new File("Users.txt");	
 		File scoreFile = new File("Scores.txt");
+		File saveFile = new File("Saved_Games.txt");
 		FileWriter writer;
 		FileWriter scoreWriter;
 		ArrayList<String> userData = new ArrayList<String>();
 		ArrayList<String> scoreData = new ArrayList<String>();
+		ArrayList<String> savedData = new ArrayList<String>();
 		ListIterator<String> iterator;
 		ListIterator<String> stringIterator;
 		
@@ -282,6 +284,42 @@ public class Profile extends JFrame
 		{
 			JOptionPane.showMessageDialog(null, "Could not update Username in Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+		
+		try
+		{
+			Scanner s = new Scanner(saveFile);
+			while(s.hasNextLine())
+			{
+				savedData.add(s.nextLine());
+			}
+			s.close();
+			
+			iterator = savedData.listIterator();
+			while(iterator.hasNext())
+			{
+				if(iterator.next().equals(user.getUsername()))
+				{
+					iterator.set(newName);
+					break;
+				}
+			}
+			writer = new FileWriter("Saved_Games.txt");
+			iterator = savedData.listIterator();
+			while(iterator.hasNext())
+			{
+				writer.write(iterator.next());
+				writer.write("\n");
+			}
+			writer.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not find Saved Games. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(null, "Could not update Saved Games. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}	
 	}
 	public void changePassword(String newName)
 	{

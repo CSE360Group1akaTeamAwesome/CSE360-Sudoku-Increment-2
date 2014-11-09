@@ -14,18 +14,24 @@ import javax.swing.text.StyledDocument;
 public class SudokuBoard extends JFrame
 {
 	// Private instance variables for features of the board
-	private int  i=0, j=0, counter=0, currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
-	private JTextPane titleMessage,possibleValues;
+	private int currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
 	private JTextField[][] entries;
-	private JTextField timeDisplay;
-	private JPanel mainBoard,title,sideBar,timerPanel,fontColorPanel;
-	private JPanel[] regions;
-	private JButton save, check, hint, quit; 
-	private JTextFieldLimit[][] doc;
+	private JTextField timeDisplay; 
 	private Timer timer;
 	private User user;
 	private String difficulty;
 	// Constructor for the new Board
+	// Take in size
+	public SudokuBoard()
+	{
+		currentTime = 0;
+		seconds = 0;
+		minutes = 0;
+		numberOfHints = 0;
+		timeDisplay = null;
+		user = null;
+		difficulty = "";
+	}
 	public SudokuBoard(int width, int height, String diff, User u)
 	{
 		user = u;
@@ -34,9 +40,9 @@ public class SudokuBoard extends JFrame
 		
 		this.setLayout(new BorderLayout());
 		
-		titleMessage = new JTextPane();
+		JTextPane titleMessage = new JTextPane();
     	
-		title = new JPanel();
+		JPanel title = new JPanel();
 		title.setBackground(Color.WHITE);
 		title.setLayout(new FlowLayout());
 		this.add(title, BorderLayout.NORTH);
@@ -61,19 +67,19 @@ public class SudokuBoard extends JFrame
 		}
 		this.add(Box.createHorizontalStrut(100), BorderLayout.WEST);
 		this.add(Box.createVerticalStrut(100), BorderLayout.SOUTH);
-		mainBoard = new JPanel();
+		JPanel mainBoard = new JPanel();
 		this.add(mainBoard, BorderLayout.CENTER);
 		mainBoard.setLayout(new GridLayout(3,3));
 		mainBoard.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		
-		sideBar = new JPanel();
+		JPanel sideBar = new JPanel();
 		sideBar.setLayout(new GridLayout(5,1));
-		possibleValues = new JTextPane();
+		JTextPane possibleValues = new JTextPane();
 		possibleValues.setText("Enter possible Values Below");
 		possibleValues.setEditable(true);
 		sideBar.add(possibleValues);
-		save = new JButton("Save Puzzle");
+		JButton save = new JButton("Save Puzzle");
 		save.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -82,7 +88,7 @@ public class SudokuBoard extends JFrame
 				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
 		    }
 		});
-		check = new JButton("Check Puzzle");
+		JButton check = new JButton("Check Puzzle");
 		check.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -108,7 +114,7 @@ public class SudokuBoard extends JFrame
 		    	}
 		    }
 		});
-		hint = new JButton("Hint");
+		JButton hint = new JButton("Hint");
 		hint.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -117,7 +123,7 @@ public class SudokuBoard extends JFrame
 		    	numberOfHints++;
 		    }
 		});
-		quit = new JButton("Quit Puzzle");
+		JButton quit = new JButton("Quit Puzzle");
 		quit.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -131,7 +137,7 @@ public class SudokuBoard extends JFrame
 		sideBar.add(quit);
 		this.add(sideBar,BorderLayout.EAST);
 		
-		fontColorPanel = new JPanel();
+		JPanel fontColorPanel = new JPanel();
 		String[] colors = {"Black","Cyan","Green","Magenta", "Orange", "Pink","Red", "Yellow" };
 		final JComboBox colorList = new JComboBox(colors);
 		colorList.addActionListener(new ActionListener() {
@@ -151,7 +157,7 @@ public class SudokuBoard extends JFrame
 		
 		this.add(fontColorPanel, BorderLayout.WEST);
 		
-		timerPanel = new JPanel();
+		JPanel timerPanel = new JPanel();
 		timerPanel.setLayout(new BoxLayout(timerPanel, BoxLayout.X_AXIS));
 		timerPanel.setBackground(Color.WHITE);
 		timeDisplay = new JTextField();
@@ -177,10 +183,10 @@ public class SudokuBoard extends JFrame
 		
 		
 		entries = new JTextField[9][9];
-		doc = new JTextFieldLimit[9][9];
-		regions = new JPanel[9];
+		JTextFieldLimit [][]doc = new JTextFieldLimit[9][9];
+		JPanel []regions = new JPanel[9];
 		
-		
+		int i = 0, j = 0, counter = 0, k = 0, l = 0;
 		// Initialize 3x3 regions
 		for(i = 0; i < 9; i++)
 		{
@@ -195,9 +201,9 @@ public class SudokuBoard extends JFrame
 		{
 			for(j = 0; j < 9; j=j+3)
 			{
-				for(int k = i; k < i + 3; k++)
+				for(k = i; k < i + 3; k++)
 				{
-					for(int l = j; l < j + 3; l++)
+					for(l = j; l < j + 3; l++)
 					{
 						entries[k][l] = new JTextField(String.valueOf(counter));
 						entries[k][l].setHorizontalAlignment(JTextField.CENTER);
@@ -218,7 +224,7 @@ public class SudokuBoard extends JFrame
 		loadPuzzle(difficulty);
 	}
 	
-	boolean checkRow(int row)
+	public boolean checkRow(int row)
 	{
 		int i = 0, j = 0, count = 0;
 		for(i = 1; i < 10; i++)
@@ -241,7 +247,7 @@ public class SudokuBoard extends JFrame
 		
 		return true;
 	}
-	boolean checkColumn(int col)
+	public boolean checkColumn(int col)
 	{
 		int i = 0, j = 0, count = 0;
 		for(j = 0; j < 10; j++)
@@ -264,7 +270,7 @@ public class SudokuBoard extends JFrame
 		
 		return true;
 	}
-	boolean checkBox(int row, int col)
+	public boolean checkBox(int row, int col)
 	{
 		int i = 0, j = 0, k = 0, count = 0;
 		for(k = 1; k < 10; k++)
@@ -292,7 +298,7 @@ public class SudokuBoard extends JFrame
 		return true;
 	}
 	
-	boolean isEmptySpace()
+	public boolean isEmptySpace()
 	{
 		int i = 0, j = 0;
 		for(i = 0; i < 9; i++)
@@ -308,7 +314,7 @@ public class SudokuBoard extends JFrame
 		}
 		return true;
 	}
-	boolean checkPuzzle()
+	public boolean checkPuzzle()
 	{
 		int i = 0;
 		if(!isEmptySpace())
@@ -333,7 +339,7 @@ public class SudokuBoard extends JFrame
 		return true;
 	}
 	
-	boolean validateInput()
+	public boolean validateInput()
 	{
 		int i = 0, j = 0;
 		for(i = 0; i < 9; i++)
@@ -356,7 +362,7 @@ public class SudokuBoard extends JFrame
 	}
 	
 	// This should should contain a parameter based on the difficulty of the puzzle
-	void loadPuzzle(String difficulty)
+	public void loadPuzzle(String difficulty)
 	{
 		File file;
 		if(difficulty.equals("Easy"))
@@ -455,7 +461,7 @@ public class SudokuBoard extends JFrame
 					iterator.next();
 					iterator.set(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize()+ " "
 							+ user.getScore().getCurrentScore()	+ " " + String.valueOf(user.getScore().getCurrentTime())
-							+ " " + user.getScore().getLastDifficulty() + " " + user.getScore().getLastSize() + String.valueOf(user.isGameSaved()));
+							+ " " + user.getScore().getLastDifficulty() + " " + user.getScore().getLastSize());
 					flag = true;
 					break;
 				}
@@ -494,22 +500,54 @@ public class SudokuBoard extends JFrame
 			{
 				saveGame();
 				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
+				MainMenu menu = new MainMenu(1000,800, user);
+				menu.setSize(1000,800);
+				menu.setVisible(true);
+				menu.setTitle("CSE360 Sudoku Main Menu");
+				dispose();
+				
+			}
+			else
+			{
 				reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
 				if(reply == JOptionPane.YES_OPTION)
 				{
-					ShowSolution solution = new ShowSolution("easy9x9Solution.txt");
+					MainMenu menu = new MainMenu(1000,800, user);
+					menu.setSize(1000,800);
+					menu.setVisible(true);
+					menu.setTitle("CSE360 Sudoku Main Menu");
+					ShowSolution solution;
+					switch(difficulty)
+					{
+					case "Easy":
+						solution = new ShowSolution("easy9x9Solution.txt","9x9");
+						break;
+					case "Medium":
+						solution = new ShowSolution("medium9x9Solution.txt", "9x9");
+						break;
+					case "Hard":
+						solution = new ShowSolution("hard9x9Solution.txt", "9x9");
+						break;
+					default:
+						solution = new ShowSolution("evil9x9Solution.txt", "9x9");
+						break;
+					}
 					solution.setSize(500,500);
 					solution.setTitle("Solution");
 					solution.setVisible(true);
 					solution.setResizable(false);
+					dispose();
 				}
-				
+				else
+				{
+					MainMenu menu = new MainMenu(1000,800, user);
+					menu.setSize(1000,800);
+					menu.setVisible(true);
+					menu.setTitle("CSE360 Sudoku Main Menu");
+					dispose();					
+				}
 			}
-			MainMenu menu = new MainMenu(1000,800, user);
-			menu.setSize(1000,800);
-			menu.setVisible(true);
-			menu.setTitle("CSE360 Sudoku Main Menu");
-			dispose();
+		
 		}
 	}
 	public void changeFontColor(String color)
@@ -613,6 +651,9 @@ public class SudokuBoard extends JFrame
 			JOptionPane.showMessageDialog(null, "Could not update Saved_Games. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
+		setUserSavedGame();
+		user.setHasSavedGame(true);
+		
 	}
 	public String getCurrentPuzzle()
 	{
@@ -643,5 +684,59 @@ public class SudokuBoard extends JFrame
 		}
 		System.out.println("Current Puzzle is" + currentPuzzle);
 		return currentPuzzle;
+	}
+	public void setUserSavedGame()
+	{
+		File file = new File("Users.txt");	
+		String line = "";
+		FileWriter writer;
+		ArrayList<String> userData= new ArrayList<String>();
+		ListIterator<String> iterator;
+		
+		try
+		{
+			Scanner s = new Scanner(file);
+			while(s.hasNextLine())
+			{
+				userData.add(s.nextLine());
+			}
+			s.close();
+			
+			iterator = userData.listIterator();
+			while(iterator.hasNext())
+			{
+				if(iterator.next().equals(user.getUsername()))
+				{
+					if(iterator.hasNext())
+					{
+						iterator.next();
+						if(iterator.hasNext())
+						{
+							line = iterator.next();
+							if(line.equals("false"))
+								iterator.set("true");
+							break;
+						}
+					}
+					
+				}
+			}
+			writer = new FileWriter("Users.txt");
+			iterator = userData.listIterator();
+			while(iterator.hasNext())
+			{
+				writer.write(iterator.next());
+				writer.write("\n");
+			}
+			writer.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not find User file. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(null, "Could not update Users. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

@@ -12,7 +12,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-public class SudokuBoard16x16 extends JFrame{
+public class SudokuBoard16x16 extends SudokuBoard{
 
 	private JTextField[][] entries;
 	private int  currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
@@ -20,7 +20,17 @@ public class SudokuBoard16x16 extends JFrame{
 	private String difficulty;
 	private JTextField timeDisplay;
 	private Timer timer;
-	
+
+	public SudokuBoard16x16()
+	{
+		currentTime = 0;
+		seconds = 0;
+		minutes = 0;
+		numberOfHints = 0;
+		timeDisplay = null;
+		user = null;
+		difficulty = "";
+	}
 	public SudokuBoard16x16(int width, int height, String diff, User u)
 	{
 		user = u;
@@ -212,7 +222,7 @@ public class SudokuBoard16x16 extends JFrame{
 		}
 		loadPuzzle(difficulty);
 	}
-	boolean checkRow(int row)
+	public boolean checkRow(int row)
 	{
 		String checker = "";
 		int i = 0, j = 0, count = 0;
@@ -263,7 +273,7 @@ public class SudokuBoard16x16 extends JFrame{
 		
 		return true;
 	}
-	boolean checkColumn(int col)
+	public boolean checkColumn(int col)
 	{	String checker = "";
 		int i = 0, j = 0, count = 0;
 		for(j = 0; j < 17; j++)
@@ -313,7 +323,7 @@ public class SudokuBoard16x16 extends JFrame{
 		
 		return true;
 	}
-	boolean checkBox(int row, int col)
+	public boolean checkBox(int row, int col)
 	{
 		String checker = "";
 		int i = 0, j = 0, k = 0, count = 0;
@@ -369,7 +379,7 @@ public class SudokuBoard16x16 extends JFrame{
 		return true;
 	}
 	
-	boolean isEmptySpace()
+	public boolean isEmptySpace()
 	{
 		int i = 0, j = 0;
 		for(i = 0; i < 9; i++)
@@ -385,7 +395,7 @@ public class SudokuBoard16x16 extends JFrame{
 		}
 		return true;
 	}
-	boolean checkPuzzle()
+	public boolean checkPuzzle()
 	{
 		int i = 0;
 		if(!isEmptySpace())
@@ -406,12 +416,12 @@ public class SudokuBoard16x16 extends JFrame{
 		return true;
 	}
 	// This should should contain a parameter based on the difficulty of the puzzle
-	void loadPuzzle(String difficulty)
+	public void loadPuzzle(String difficulty)
 	{
 		File file;
 		if(difficulty.equals("Easy"))
 		{
-			file = new File("easy16x16Solution.txt");
+			file = new File("easy16x16.txt");
 		}
 		else if(difficulty.equals("Medium"))
 		{
@@ -481,60 +491,6 @@ public class SudokuBoard16x16 extends JFrame{
 		
 	}
 	
-	public void saveScoreStats()
-	{
-		File file = new File("Scores.txt");	
-		boolean flag = false;
-		FileWriter writer;
-		ArrayList<String> scoreData = new ArrayList<String>();
-		ListIterator<String> iterator;
-		
-		try
-		{
-			Scanner s = new Scanner(file);
-			while(s.hasNextLine())
-			{
-				scoreData.add(s.nextLine());
-			}
-			s.close();
-			
-			iterator = scoreData.listIterator();
-			while(iterator.hasNext())
-			{
-				if(iterator.next().equals(user.getUsername()))
-				{
-					iterator.next();
-					iterator.set(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize()+ " "
-							+ user.getScore().getCurrentScore()	+ " " + String.valueOf(user.getScore().getCurrentTime())
-							+ " " + user.getScore().getLastDifficulty() + " " + user.getScore().getLastSize() + String.valueOf(user.isGameSaved()));
-					flag = true;
-					break;
-				}
-			}
-			if(flag == false)
-			{
-				scoreData.add(user.getUsername());
-				scoreData.add(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize());
-			}
-			writer = new FileWriter("Scores.txt");
-			iterator = scoreData.listIterator();
-			while(iterator.hasNext())
-			{
-				writer.write(iterator.next());
-				writer.write("\n");
-			}
-			writer.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			JOptionPane.showMessageDialog(null, "Could not find Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
-		} 
-		catch (IOException e) 
-		{
-			JOptionPane.showMessageDialog(null, "Could not update Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
-		}	
-	}
-	
 	public void backToMenu()
 	{
 		int reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
@@ -545,57 +501,57 @@ public class SudokuBoard16x16 extends JFrame{
 			{
 				saveGame();
 				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
+				MainMenu menu = new MainMenu(1000,800, user);
+				menu.setSize(1000,800);
+				menu.setVisible(true);
+				menu.setTitle("CSE360 Sudoku Main Menu");
+				dispose();
+				
+			}
+			else
+			{
 				reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
 				if(reply == JOptionPane.YES_OPTION)
 				{
-					ShowSolution solution = new ShowSolution("easy9x9Solution.txt");
-					solution.setSize(500,500);
+					MainMenu menu = new MainMenu(1000,800, user);
+					menu.setSize(1000,800);
+					menu.setVisible(true);
+					menu.setTitle("CSE360 Sudoku Main Menu");
+					ShowSolution solution;
+					switch(difficulty)
+					{
+					case "Easy":
+						solution = new ShowSolution("easy16x16Solution.txt", "16x16");
+						break;
+					case "Medium":
+						solution = new ShowSolution("medium16x16Solution.txt", "16x16");
+						break;
+					case "Hard":
+						solution = new ShowSolution("hard16x16Solution.txt", "16x16");
+						break;
+					default:
+						solution = new ShowSolution("evil16x16Solution.txt", "16x16");
+						break;
+					}
+					solution.setSize(700,700);
 					solution.setTitle("Solution");
 					solution.setVisible(true);
 					solution.setResizable(false);
+					dispose();
 				}
-				
-			}
-			MainMenu menu = new MainMenu(1000,800, user);
-			menu.setSize(1000,800);
-			menu.setVisible(true);
-			menu.setTitle("CSE360 Sudoku Main Menu");
-			dispose();
-		}
-	}
-	public void changeFontColor(String color)
-	{
-		int i = 0, j = 0;
-		Color fontColor;
-		if(color.equals("Black"))
-			fontColor = Color.BLACK;
-		else if(color.equals("Cyan"))
-			fontColor = Color.CYAN;
-		else if(color.equals("Green"))
-			fontColor = Color.GREEN;
-		else if(color.equals("Magenta"))
-			fontColor = Color.MAGENTA;
-		else if(color.equals("Orange"))
-			fontColor = Color.ORANGE;
-		else if(color.equals("Pink"))
-			fontColor = Color.PINK;
-		else if(color.equals("Red"))
-			fontColor = Color.RED;
-		else 
-			fontColor = Color.YELLOW;
-		
-		for(i = 0; i < 16; i++)
-		{
-			for(j = 0; j < 16; j++)
-			{
-				if(entries[i][j].isEditable() && entries[i][j].getText().equals(""))
+				else
 				{
-					entries[i][j].setForeground(fontColor);
+					MainMenu menu = new MainMenu(1000,800, user);
+					menu.setSize(1000,800);
+					menu.setVisible(true);
+					menu.setTitle("CSE360 Sudoku Main Menu");
+					dispose();					
 				}
 			}
-		}
 		
+		}
 	}
+	
 	public void saveGame()
 	{
 		File file = new File("Saved_Games.txt");	
@@ -663,6 +619,8 @@ public class SudokuBoard16x16 extends JFrame{
 		{
 			JOptionPane.showMessageDialog(null, "Could not update Saved_Games. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+		setUserSavedGame();
+		user.setHasSavedGame(true);
 		
 	}
 	public String getCurrentPuzzle()
@@ -694,5 +652,59 @@ public class SudokuBoard16x16 extends JFrame{
 		}
 		System.out.println("Current Puzzle is" + currentPuzzle);
 		return currentPuzzle;
+	}
+	public void setUserSavedGame()
+	{
+		File file = new File("Users.txt");	
+		String line = "";
+		FileWriter writer;
+		ArrayList<String> userData= new ArrayList<String>();
+		ListIterator<String> iterator;
+		
+		try
+		{
+			Scanner s = new Scanner(file);
+			while(s.hasNextLine())
+			{
+				userData.add(s.nextLine());
+			}
+			s.close();
+			
+			iterator = userData.listIterator();
+			while(iterator.hasNext())
+			{
+				if(iterator.next().equals(user.getUsername()))
+				{
+					if(iterator.hasNext())
+					{
+						iterator.next();
+						if(iterator.hasNext())
+						{
+							line = iterator.next();
+							if(line.equals("false"))
+								iterator.set("true");
+							break;
+						}
+					}
+					
+				}
+			}
+			writer = new FileWriter("Users.txt");
+			iterator = userData.listIterator();
+			while(iterator.hasNext())
+			{
+				writer.write(iterator.next());
+				writer.write("\n");
+			}
+			writer.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not find User file. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(null, "Could not update Users. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

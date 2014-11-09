@@ -99,7 +99,7 @@ public class MainMenu extends JFrame
 	    savedGame.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent ae)
 	    	{
-	    		if(user.isGameSaved() || findSavedGameSize().equals("9x9") || findSavedGameSize().equals("16x16"))
+	    		if(user.isGameSaved())
 	    		{
 	    			if(findSavedGameSize().equals("9x9"))
 	    			{

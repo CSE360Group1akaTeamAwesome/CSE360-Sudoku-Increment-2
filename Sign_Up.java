@@ -67,6 +67,8 @@ public class Sign_Up extends JFrame
 						bw.write(usernameField.getText());
 						bw.write("\n");
 						bw.write(new String(passwordField.getPassword()));
+						bw.write("\n");
+						bw.write("false");
 						bw.write("\n\n");
 						bw.close();
 			 

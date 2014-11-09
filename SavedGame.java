@@ -11,18 +11,12 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-public class SavedGame extends JFrame
+public class SavedGame extends SudokuBoard
 {
 	// Private instance variables for features of the board
-	private int  i=0, j=0, counter=0, currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
-	private JTextPane titleMessage,possibleValues;
+	private int currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
 	private JTextField[][] entries;
-	private JTextField timeDisplay;
-	private JPanel mainBoard,title,sideBar,timerPanel,fontColorPanel;
-	private JPanel[] regions;
-	private JButton save, check, hint, quit; 
-	private JFrame error;
-	private JTextFieldLimit[][] doc;
+	private JTextField timeDisplay; 
 	private Timer timer;
 	private User user;
 	private String difficulty;
@@ -34,9 +28,9 @@ public class SavedGame extends JFrame
 		
 		this.setLayout(new BorderLayout());
 		
-		titleMessage = new JTextPane();
+		JTextPane titleMessage = new JTextPane();
     	
-		title = new JPanel();
+		JPanel title = new JPanel();
 		title.setLayout(new FlowLayout());
 		title.setBackground(Color.WHITE);
 		this.add(title, BorderLayout.NORTH);
@@ -55,19 +49,19 @@ public class SavedGame extends JFrame
     	StyleConstants.setAlignment(messageFont, StyleConstants.ALIGN_CENTER);
 		this.add(Box.createHorizontalStrut(100), BorderLayout.WEST);
 		this.add(Box.createVerticalStrut(100), BorderLayout.SOUTH);
-		mainBoard = new JPanel();
+		JPanel mainBoard = new JPanel();
 		this.add(mainBoard, BorderLayout.CENTER);
 		mainBoard.setLayout(new GridLayout(3,3));
 		mainBoard.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		
-		sideBar = new JPanel();
+		JPanel sideBar = new JPanel();
 		sideBar.setLayout(new GridLayout(5,1));
-		possibleValues = new JTextPane();
+		JTextPane possibleValues = new JTextPane();
 		possibleValues.setText("Enter possible Values Below");
 		possibleValues.setEditable(true);
 		sideBar.add(possibleValues);
-		save = new JButton("Save Puzzle");
+		JButton save = new JButton("Save Puzzle");
 		save.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -76,7 +70,7 @@ public class SavedGame extends JFrame
 				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
 		    }
 		});
-		check = new JButton("Check Puzzle");
+		JButton check = new JButton("Check Puzzle");
 		check.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -102,7 +96,7 @@ public class SavedGame extends JFrame
 		    	}
 		    }
 		});
-		hint = new JButton("Hint");
+		JButton hint = new JButton("Hint");
 		hint.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -111,7 +105,7 @@ public class SavedGame extends JFrame
 		    	numberOfHints++;
 		    }
 		});
-		quit = new JButton("Quit Puzzle");
+		JButton quit = new JButton("Quit Puzzle");
 		quit.addActionListener(new ActionListener() 
 	    {
 		    public void actionPerformed(ActionEvent ae)
@@ -125,7 +119,7 @@ public class SavedGame extends JFrame
 		sideBar.add(quit);
 		this.add(sideBar,BorderLayout.EAST);
 		
-		fontColorPanel = new JPanel();
+		JPanel fontColorPanel = new JPanel();
 		String[] colors = {"Black","Cyan","Green","Magenta", "Orange", "Pink","Red", "Yellow" };
 		final JComboBox colorList = new JComboBox(colors);
 		colorList.addActionListener(new ActionListener() {
@@ -145,7 +139,7 @@ public class SavedGame extends JFrame
 		
 		this.add(fontColorPanel, BorderLayout.WEST);
 		
-		timerPanel = new JPanel();
+		JPanel timerPanel = new JPanel();
 		timerPanel.setLayout(new BoxLayout(timerPanel, BoxLayout.X_AXIS));
 		timerPanel.setBackground(Color.WHITE);
 		timeDisplay = new JTextField();
@@ -171,11 +165,10 @@ public class SavedGame extends JFrame
 		
 		
 		entries = new JTextField[9][9];
-		doc = new JTextFieldLimit[9][9];
-		regions = new JPanel[9];
+		JTextFieldLimit[][] doc = new JTextFieldLimit[9][9];
+		JPanel []regions = new JPanel[9];
 		
-		error = new JFrame();
-		
+		int i = 0, j = 0, k = 0, l = 0, counter = 0;
 		// Initialize 3x3 regions
 		for(i = 0; i < 9; i++)
 		{
@@ -198,9 +191,9 @@ public class SavedGame extends JFrame
 		{
 			for(j = 0; j < 9; j=j+3)
 			{
-				for(int k = i; k < i + 3; k++)
+				for( k = i; k < i + 3; k++)
 				{
-					for(int l = j; l < j + 3; l++)
+					for(l = j; l < j + 3; l++)
 					{
 						entries[k][l] = new JTextField(String.valueOf(counter));
 						entries[k][l].setHorizontalAlignment(JTextField.CENTER);
@@ -226,146 +219,69 @@ public class SavedGame extends JFrame
 			e.printStackTrace();
 		}
 	}
-	
-	boolean checkRow(int row)
+
+	public void backToMenu()
 	{
-		int i = 0, j = 0, count = 0;
-		for(i = 1; i < 10; i++)
-		{	
-			count = 0;
-			for(j = 0; j < 9; j++)
+		int reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
+		if(reply == JOptionPane.YES_OPTION)
+		{
+			reply = JOptionPane.showConfirmDialog(null, "Would you like to save your progress before quiting?");
+			if(reply == JOptionPane.YES_OPTION)
 			{
-				if(i == Integer.parseInt(entries[row][j].getText()) )
-				{
-					count++;
-				}
-				if( count >= 2)
-				{
-					System.out.println("checkRow() returned false at i: " + row + " j: "+j + " with " + entries[row][j].getText()); 
-					return false;
-				}
+				saveGame();
+				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
+				MainMenu menu = new MainMenu(1000,800, user);
+				menu.setSize(1000,800);
+				menu.setVisible(true);
+				menu.setTitle("CSE360 Sudoku Main Menu");
+				dispose();
 				
 			}
-		}
-		
-		return true;
-	}
-	boolean checkColumn(int col)
-	{
-		int i = 0, j = 0, count = 0;
-		for(j = 0; j < 10; j++)
-		{
-			count = 0;
-			for(i = 0; i < 9; i++)
+			else
 			{
-				if(j == Integer.parseInt(entries[i][col].getText()) )
+				reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
+				if(reply == JOptionPane.YES_OPTION)
 				{
-					count++;
+					MainMenu menu = new MainMenu(1000,800, user);
+					menu.setSize(1000,800);
+					menu.setVisible(true);
+					menu.setTitle("CSE360 Sudoku Main Menu");
+					ShowSolution solution;
+					switch(difficulty)
+					{
+					case "Easy":
+						solution = new ShowSolution("easy9x9Solution.txt", "9x9");
+						break;
+					case "Medium":
+						solution = new ShowSolution("medium9x9Solution.txt", "9x9");
+						break;
+					case "Hard":
+						solution = new ShowSolution("hard9x9Solution.txt", "9x9");
+						break;
+					default:
+						solution = new ShowSolution("evil9x9Solution.txt", "9x9");
+						break;
+					}
+					solution.setSize(500,500);
+					solution.setTitle("Solution");
+					solution.setVisible(true);
+					solution.setResizable(false);
+					dispose();
 				}
-				if(count >= 2)
+				else
 				{
-					System.out.println("checkColumn() returned false at i: " + i + " j: "+ col + " with " + entries[i][col].getText()); 
-					return false;
-				}
-				
-			}
-		}
-		
-		return true;
-	}
-	boolean checkBox(int row, int col)
-	{
-		int i = 0, j = 0, k = 0, count = 0;
-		for(k = 1; k < 10; k++)
-		{
-			for(i = row; i < row+3; i++)
-			{
-				for(j = col; j < col+3; j++)
-				{	
-					count = 0;
-					
-						if(k == Integer.parseInt(entries[i][j].getText()) )
-						{
-							count++;
-						}
-						if(count >= 2)
-						{
-							System.out.println("checkBox() returned false at i: " + i + " j: "+ j + " with " + entries[i][j].getText()); 
-							return false;
-						}
-					
+					MainMenu menu = new MainMenu(1000,800, user);
+					menu.setSize(1000,800);
+					menu.setVisible(true);
+					menu.setTitle("CSE360 Sudoku Main Menu");
+					dispose();					
 				}
 			}
-		}
 		
-		return true;
+		}
 	}
-	
-	boolean isEmptySpace()
-	{
-		int i = 0, j = 0;
-		for(i = 0; i < 9; i++)
-		{
-			for(j = 0; j < 9; j++)
-			{	
-				if(entries[i][j].getText().equals(""))
-				{
-					System.out.println("isEmptySpace() returned false at i: " + i + " j: "+j); 
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	boolean checkPuzzle()
-	{
-		int i = 0;
-		if(!isEmptySpace())
-		{
-			return false;
-		}
-		if(!validateInput())
-		{
-			return false;
-		}
-		for(i = 0; i < 9; i++)
-		{
-			if(checkRow(i) == false || checkColumn(i) == false)
-			{
-				return false;
-			}
-		}
-		
-		if(!checkBox(0,0)||!checkBox(0,3)||!checkBox(0,6)||!checkBox(3,0)||!checkBox(3,3)||!checkBox(3,6)||!checkBox(6,0)||!checkBox(6,3)||!checkBox(6,6))
-			return false;
-		
-		return true;
-	}
-	
-	boolean validateInput()
-	{
-		int i = 0, j = 0;
-		for(i = 0; i < 9; i++)
-		{
-			for(j = 0; j < 9; j++)
-			{
-				    try 
-				    {
-				    	
-				        Integer.parseInt(entries[i][j].getText());
-				    }
-				    catch (NumberFormatException e) 
-				    {
-				        JOptionPane.showMessageDialog(error, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
-				        return false;
-				    }
-			}
-		}
-		return true;
-	}
-	
 	// This should should contain a parameter based on the difficulty of the puzzle
-	void loadPuzzle()
+	public void loadPuzzle()
 	{
 		File file;
 		file = new File("Saved_Games.txt");
@@ -436,134 +352,35 @@ public class SavedGame extends JFrame
 		}
 		
 	}
-	public void computeStats()
+	public String getCurrentPuzzle()
 	{
-		user.getScore().setCurrentTime(currentTime);
-		user.getScore().setNumberOfHints(numberOfHints);
-		user.getScore().setLastDifficulty(difficulty);
-		user.getScore().setLastSize("9x9");
-		user.getScore().calculateScore();
-		user.getScore().displayLatestStats();
-		user.setHasSavedGame(false);
-		saveScoreStats();
-		
-	}
-	
-	public void saveScoreStats()
-	{
-		File file = new File("Scores.txt");	
-		boolean flag = false;
-		FileWriter writer;
-		ArrayList<String> scoreData = new ArrayList<String>();
-		ListIterator<String> iterator;
-		
-		try
-		{
-			Scanner s = new Scanner(file);
-			while(s.hasNextLine())
-			{
-				scoreData.add(s.nextLine());
-			}
-			s.close();
-			
-			iterator = scoreData.listIterator();
-			while(iterator.hasNext())
-			{
-				if(iterator.next().equals(user.getUsername()))
-				{
-					iterator.next();
-					iterator.set(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize()+ " "
-							+ user.getScore().getCurrentScore()	+ " " + String.valueOf(user.getScore().getCurrentTime())
-							+ " " + user.getScore().getLastDifficulty() + " " + user.getScore().getLastSize() + String.valueOf(user.isGameSaved()));
-					flag = true;
-					break;
-				}
-			}
-			if(flag == false)
-			{
-				scoreData.add(user.getUsername());
-				scoreData.add(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize());
-			}
-			writer = new FileWriter("Scores.txt");
-			iterator = scoreData.listIterator();
-			while(iterator.hasNext())
-			{
-				writer.write(iterator.next());
-				writer.write("\n");
-			}
-			writer.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			JOptionPane.showMessageDialog(null, "Could not find Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
-		} 
-		catch (IOException e) 
-		{
-			JOptionPane.showMessageDialog(null, "Could not update Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
-		}	
-	}
-	
-	public void backToMenu()
-	{
-		int reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
-		if(reply == JOptionPane.YES_OPTION)
-		{
-			reply = JOptionPane.showConfirmDialog(null, "Would you like to save your progress before quiting?");
-			if(reply == JOptionPane.YES_OPTION)
-			{
-				saveGame();
-				JOptionPane.showMessageDialog(null, "Puzzle Saved", "Success", JOptionPane.INFORMATION_MESSAGE);
-				reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
-				if(reply == JOptionPane.YES_OPTION)
-				{
-					ShowSolution solution = new ShowSolution("easy9x9Solution.txt");
-					solution.setSize(500,500);
-					solution.setTitle("Solution");
-					solution.setVisible(true);
-					solution.setResizable(false);
-				}
-				
-			}
-			
-			MainMenu menu = new MainMenu(1000,800, user);
-			menu.setSize(1000,800);
-			menu.setVisible(true);
-			menu.setTitle("CSE360 Sudoku Main Menu");
-			dispose();
-		}
-	}
-	public void changeFontColor(String color)
-	{
+		String currentPuzzle = "";
 		int i = 0, j = 0;
-		Color fontColor;
-		if(color.equals("Black"))
-			fontColor = Color.BLACK;
-		else if(color.equals("Cyan"))
-			fontColor = Color.CYAN;
-		else if(color.equals("Green"))
-			fontColor = Color.GREEN;
-		else if(color.equals("Magenta"))
-			fontColor = Color.MAGENTA;
-		else if(color.equals("Orange"))
-			fontColor = Color.ORANGE;
-		else if(color.equals("Pink"))
-			fontColor = Color.PINK;
-		else if(color.equals("Red"))
-			fontColor = Color.RED;
-		else 
-			fontColor = Color.YELLOW;
-		
 		for(i = 0; i < 9; i++)
 		{
 			for(j = 0; j < 9; j++)
 			{
-				if(entries[i][j].isEditable() && entries[i][j].getText().equals(""))
+				if(entries[i][j].isEditable())
 				{
-					entries[i][j].setForeground(fontColor);
+					currentPuzzle = currentPuzzle +"E ";
+				}
+				else
+				{
+					currentPuzzle = currentPuzzle +"N ";
+				}
+				if(entries[i][j].getText().equals(""))
+				{
+					currentPuzzle = currentPuzzle + "0 ";
+				}
+				else
+				{
+					currentPuzzle = currentPuzzle + entries[i][j].getText() + " ";
 				}
 			}
+			
 		}
-		
+		System.out.println("Current Puzzle is" + currentPuzzle);
+		return currentPuzzle;
 	}
 	public void saveGame()
 	{
@@ -633,35 +450,63 @@ public class SavedGame extends JFrame
 			JOptionPane.showMessageDialog(null, "Could not update Saved_Games. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
+		setUserSavedGame();
+		user.setHasSavedGame(true);
+		
 	}
-	public String getCurrentPuzzle()
+	public void setUserSavedGame()
 	{
-		String currentPuzzle = "";
-		int i = 0, j = 0;
-		for(i = 0; i < 9; i++)
+		File file = new File("Users.txt");	
+		String line = "";
+		FileWriter writer;
+		ArrayList<String> userData= new ArrayList<String>();
+		ListIterator<String> iterator;
+		
+		try
 		{
-			for(j = 0; j < 9; j++)
+			Scanner s = new Scanner(file);
+			while(s.hasNextLine())
 			{
-				if(entries[i][j].isEditable())
+				userData.add(s.nextLine());
+			}
+			s.close();
+			
+			iterator = userData.listIterator();
+			while(iterator.hasNext())
+			{
+				if(iterator.next().equals(user.getUsername()))
 				{
-					currentPuzzle = currentPuzzle +"E ";
-				}
-				else
-				{
-					currentPuzzle = currentPuzzle +"N ";
-				}
-				if(entries[i][j].getText().equals(""))
-				{
-					currentPuzzle = currentPuzzle + "0 ";
-				}
-				else
-				{
-					currentPuzzle = currentPuzzle + entries[i][j].getText() + " ";
+					if(iterator.hasNext())
+					{
+						iterator.next();
+						if(iterator.hasNext())
+						{
+							line = iterator.next();
+							if(line.equals("false"))
+								iterator.set("true");
+							break;
+						}
+					}
+					
 				}
 			}
-			
+			writer = new FileWriter("Users.txt");
+			iterator = userData.listIterator();
+			while(iterator.hasNext())
+			{
+				writer.write(iterator.next());
+				writer.write("\n");
+			}
+			writer.close();
 		}
-		System.out.println("Current Puzzle is" + currentPuzzle);
-		return currentPuzzle;
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Could not find User file. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			JOptionPane.showMessageDialog(null, "Could not update Users. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
+	
 }

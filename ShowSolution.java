@@ -11,75 +11,143 @@ public class ShowSolution extends JFrame
 	private JPanel[] regions;
 	private JTextField[][] entries;
 	
-	public ShowSolution(String gameName)
+	public ShowSolution(String gameName, String size)
 	{
 		int counter = 0, i = 0, j = 0, k = 0, l = 0;
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(3,3));
-		entries = new JTextField[9][9];
-		regions = new JPanel[9];
 		this.add(mainPanel);
 		
-		for(i = 0; i < 9; i++)
+		if(size.equals("9x9"))
 		{
-			regions[i] = new JPanel();
-			regions[i].setLayout(new GridLayout(3,3));
-			regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
-		}
-		//Initialize mainBoard
-		for(i = 0; i < 3; i++)
-		{
-			for(j = 0; j < 3; j++)
+			mainPanel.setLayout(new GridLayout(3,3));
+			entries = new JTextField[9][9];
+			regions = new JPanel[9];
+			for(i = 0; i < 9; i++)
 			{
-				mainPanel.add(regions[counter]);
-				counter++;
+				regions[i] = new JPanel();
+				regions[i].setLayout(new GridLayout(3,3));
+				regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
 			}
-		}
-		counter = 1;
-		for(i = 0; i < 9; i=i+3)
-		{
-			for(j = 0; j < 9; j=j+3)
+			//Initialize mainBoard
+			for(i = 0; i < 3; i++)
 			{
-				for(k = i; k < i + 3; k++)
+				for(j = 0; j < 3; j++)
 				{
-					for(l = j; l < j + 3; l++)
-					{
-						entries[k][l] = new JTextField(String.valueOf(counter));
-						entries[k][l].setEditable(false);
-						entries[k][l].setHorizontalAlignment(JTextField.CENTER);
-						regions[counter-1].add(entries[k][l]);
-					}
+					mainPanel.add(regions[counter]);
+					counter++;
 				}
-				counter++;
+			}
+			counter = 1;
+			for(i = 0; i < 9; i=i+3)
+			{
+				for(j = 0; j < 9; j=j+3)
+				{
+					for(k = i; k < i + 3; k++)
+					{
+						for(l = j; l < j + 3; l++)
+						{
+							entries[k][l] = new JTextField(String.valueOf(counter));
+							entries[k][l].setEditable(false);
+							entries[k][l].setHorizontalAlignment(JTextField.CENTER);
+							regions[counter-1].add(entries[k][l]);
+						}
+					}
+					counter++;
+				}
 			}
 		}
-		loadSolution(gameName);
+		else
+		{
+			mainPanel.setLayout(new GridLayout(4,4));
+			entries = new JTextField[16][16];
+			regions = new JPanel[16];
+			for(i = 0; i < 16; i++)
+			{
+				regions[i] = new JPanel();
+				regions[i].setLayout(new GridLayout(4,4));
+				regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
+			}
+			//Initialize mainBoard
+			for(i = 0; i < 4; i++)
+			{
+				for(j = 0; j < 4; j++)
+				{
+					mainPanel.add(regions[counter]);
+					counter++;
+				}
+			}
+			counter = 1;
+			for(i = 0; i < 16; i=i+4)
+			{
+				for(j = 0; j < 16; j=j+4)
+				{
+					for(k = i; k < i + 4; k++)
+					{
+						for(l = j; l < j + 4; l++)
+						{
+							entries[k][l] = new JTextField(String.valueOf(counter));
+							entries[k][l].setEditable(false);
+							entries[k][l].setHorizontalAlignment(JTextField.CENTER);
+							regions[counter-1].add(entries[k][l]);
+						}
+					}
+					counter++;
+				}
+			}
+		}
+		loadSolution(gameName, size);
 	}
-	void loadSolution(String nameOfFile)
+	void loadSolution(String nameOfFile, String size)
 	{
 		File file = new File(nameOfFile);
-		int i = 0, j = 0, value = 0;
+		int i = 0, j = 0, v = 0;
+		String value ="";
 		Scanner scanner;
 		try 
 		{
 			scanner = new Scanner(file);
-			
-			for(i = 0; i < 9; i++)
+			if(size.equals("9x9"))
 			{
-				for(j = 0; j < 9; j++)
+				for(i = 0; i < 9; i++)
 				{
-					if (scanner.hasNextInt())
+					for(j = 0; j < 9; j++)
 					{
-						value = scanner.nextInt();						
-						try
+						if (scanner.hasNextInt())
 						{
-							entries[i][j].setText(String.valueOf(value));
+							v= scanner.nextInt();						
+							try
+							{
+								entries[i][j].setText(String.valueOf(value));
+							}
+							catch(Exception e)
+							{
+								System.out.println("It broke at i: " + i + " j: " + j + " with " + String.valueOf(v));	
+							}
+		
 						}
-						catch(Exception e)
+					}
+				}
+			}
+			else
+			{
+				for(i = 0; i < 16; i++)
+				{
+					for(j = 0; j < 16; j++)
+					{
+						if (scanner.hasNext())
 						{
-							System.out.println("It broke at i: " + i + " j: " + j + " with " + value);	
+							value = scanner.next();						
+							try
+							{
+								entries[i][j].setText(value);
+							}
+							catch(Exception e)
+							{
+								System.out.println("It broke at i: " + i + " j: " + j + " with " + value);	
+							}
+		
 						}
-	
 					}
 				}
 			}
