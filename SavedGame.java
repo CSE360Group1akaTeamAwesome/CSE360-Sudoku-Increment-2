@@ -280,6 +280,145 @@ public class SavedGame extends SudokuBoard
 		
 		}
 	}
+	public boolean checkRow(int row)
+	{
+		int i = 0, j = 0, count = 0;
+		for(i = 1; i < 10; i++)
+		{	
+			count = 0;
+			for(j = 0; j < 9; j++)
+			{
+				if(i == Integer.parseInt(entries[row][j].getText()) )
+				{
+					count++;
+				}
+				if( count >= 2)
+				{
+					System.out.println("checkRow() returned false at i: " + row + " j: "+j + " with " + entries[row][j].getText()); 
+					return false;
+				}
+				
+			}
+		}
+		
+		return true;
+	}
+	public boolean checkColumn(int col)
+	{
+		int i = 0, j = 0, count = 0;
+		for(j = 0; j < 10; j++)
+		{
+			count = 0;
+			for(i = 0; i < 9; i++)
+			{
+				if(j == Integer.parseInt(entries[i][col].getText()) )
+				{
+					count++;
+				}
+				if(count >= 2)
+				{
+					System.out.println("checkColumn() returned false at i: " + i + " j: "+ col + " with " + entries[i][col].getText()); 
+					return false;
+				}
+				
+			}
+		}
+		
+		return true;
+	}
+	public boolean checkBox(int row, int col)
+	{
+		int i = 0, j = 0, k = 0, count = 0;
+		for(k = 1; k < 10; k++)
+		{
+			for(i = row; i < row+3; i++)
+			{
+				for(j = col; j < col+3; j++)
+				{	
+					count = 0;
+					
+						if(k == Integer.parseInt(entries[i][j].getText()) )
+						{
+							count++;
+						}
+						if(count >= 2)
+						{
+							System.out.println("checkBox() returned false at i: " + i + " j: "+ j + " with " + entries[i][j].getText()); 
+							return false;
+						}
+					
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public boolean isEmptySpace()
+	{
+		int i = 0, j = 0;
+		for(i = 0; i < 9; i++)
+		{
+			for(j = 0; j < 9; j++)
+			{	
+				if(entries[i][j].getText().equals(""))
+				{
+					System.out.println("isEmptySpace() returned false at i: " + i + " j: "+j); 
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	public boolean checkPuzzle()
+	{
+		int i = 0;
+		if(!isEmptySpace())
+		{
+			return false;
+		}
+		if(!validateInput())
+		{
+			return false;
+		}
+		for(i = 0; i < 9; i++)
+		{
+			if(checkRow(i) == false || checkColumn(i) == false)
+			{
+				return false;
+			}
+		}
+		
+		if(!checkBox(0,0)||!checkBox(0,3)||!checkBox(0,6)||!checkBox(3,0)||!checkBox(3,3)||!checkBox(3,6)||!checkBox(6,0)||!checkBox(6,3)||!checkBox(6,6))
+			return false;
+		
+		return true;
+	}
+	
+	public boolean validateInput()
+	{
+		int i = 0, j = 0;
+		for(i = 0; i < 9; i++)
+		{
+			for(j = 0; j < 9; j++)
+			{
+				    try 
+				    {
+				    	
+				        if(Integer.parseInt(entries[i][j].getText()) < 1)
+				        {
+				        	return false;
+				        }
+				    }
+				    catch (NumberFormatException e) 
+				    {
+				        JOptionPane.showMessageDialog(null, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
+				        return false;
+				    }
+			}
+		}
+		return true;
+	}
 	// This should should contain a parameter based on the difficulty of the puzzle
 	public void loadPuzzle()
 	{

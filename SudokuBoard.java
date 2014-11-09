@@ -349,7 +349,10 @@ public class SudokuBoard extends JFrame
 				    try 
 				    {
 				    	
-				        Integer.parseInt(entries[i][j].getText());
+				        if(Integer.parseInt(entries[i][j].getText()) < 1)
+				        {
+				        	return false;
+				        }
 				    }
 				    catch (NumberFormatException e) 
 				    {

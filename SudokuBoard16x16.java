@@ -276,7 +276,7 @@ public class SudokuBoard16x16 extends SudokuBoard{
 	public boolean checkColumn(int col)
 	{	String checker = "";
 		int i = 0, j = 0, count = 0;
-		for(j = 0; j < 17; j++)
+		for(j = 1; j < 17; j++)
 		{
 			switch(j)
 			{
@@ -395,6 +395,33 @@ public class SudokuBoard16x16 extends SudokuBoard{
 		}
 		return true;
 	}
+	public boolean validateInput()
+	{
+		int i = 0, j = 0;
+		for(i = 0; i < 16; i++)
+		{
+			for(j = 0; j < 16; j++)
+			{
+				    try 
+				    {
+				    	
+				        if(!( entries[i][j].getText().equals("1")||entries[i][j].getText().equals("2")||entries[i][j].getText().equals("3")||entries[i][j].getText().equals("4")
+				        		||entries[i][j].getText().equals("5")||entries[i][j].getText().equals("6")||entries[i][j].getText().equals("7")||entries[i][j].getText().equals("6")
+				        		||entries[i][j].getText().equals("9")||entries[i][j].getText().equals("A")||entries[i][j].getText().equals("B")||entries[i][j].getText().equals("C")
+				        		||entries[i][j].getText().equals("D")||entries[i][j].getText().equals("E")||entries[i][j].getText().equals("F")||entries[i][j].getText().equals("G") ))
+				        {
+				        	return false;
+				        }
+				    }
+				    catch (NumberFormatException e) 
+				    {
+				        JOptionPane.showMessageDialog(null, "Invalid input. Enter an integer at row " + (i+1) + " column " + (j+1), "Error", JOptionPane.ERROR_MESSAGE);
+				        return false;
+				    }
+			}
+		}
+		return true;
+	}
 	public boolean checkPuzzle()
 	{
 		int i = 0;
@@ -402,6 +429,8 @@ public class SudokuBoard16x16 extends SudokuBoard{
 		{
 			return false;
 		}
+		if(!validateInput())
+			return false;
 		for(i = 0; i < 16; i++)
 		{
 			if(checkRow(i) == false || checkColumn(i) == false)
