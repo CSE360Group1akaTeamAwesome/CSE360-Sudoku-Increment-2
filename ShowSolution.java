@@ -118,7 +118,7 @@ public class ShowSolution extends JFrame
 							v= scanner.nextInt();						
 							try
 							{
-								entries[i][j].setText(String.valueOf(value));
+								entries[i][j].setText(String.valueOf(v));
 							}
 							catch(Exception e)
 							{
