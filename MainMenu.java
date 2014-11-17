@@ -13,29 +13,30 @@ import javax.swing.text.StyledDocument;
 
 public class MainMenu extends JFrame
 {
-	private JButton instructions =new JButton("Instructions");
-	private JButton playGame =new JButton("Play New Game");
-	private JButton savedGame =new JButton("Play Saved Game");
-	private JButton viewProfile = new JButton("View Profile");
-	private JButton logout = new JButton("Log Out");
-	private JPanel layout;
-	private JPanel buttonLayout;
-	private JTextPane welcome;
+	
 	private int difficulty = 0, size = 0;
 	private User user;
 	
 	public MainMenu(int width, int height, User u)
 	{
+		
 		user = u;
 	    this.setSize(width, height);
 	    this.setLayout(new GridLayout(1,1));
 	    
-	    buttonLayout = new JPanel();
-	    buttonLayout.setLayout(new GridLayout(6,1));
-	    layout = new JPanel();
+		JButton instructions =new JButton("Instructions");
+		JButton playGame =new JButton("Play New Game");
+		JButton savedGame =new JButton("Play Saved Game");
+		JButton viewLeaderBoard = new JButton("View Leader Board");
+		JButton viewProfile = new JButton("View Profile");
+		JButton logout = new JButton("Log Out");
+		
+	    JPanel buttonLayout = new JPanel();
+	    buttonLayout.setLayout(new GridLayout(7,1));
+	    JPanel layout = new JPanel();
 	    layout.setSize(width,height);
 	    layout.setLayout(new BorderLayout());
-	    welcome = new JTextPane();
+	    JTextPane welcome = new JTextPane();
 	    welcome.setEditable(false);
 	    StyledDocument doc1 = (StyledDocument) welcome.getDocument();
     	SimpleAttributeSet titleFont = new SimpleAttributeSet();
@@ -56,6 +57,7 @@ public class MainMenu extends JFrame
 	    buttonLayout.add(instructions);
 	    buttonLayout.add(playGame);
 	    buttonLayout.add(savedGame);
+	    buttonLayout.add(viewLeaderBoard);
 	    buttonLayout.add(viewProfile);
 	    buttonLayout.add(logout);
 	    instructions.addActionListener(new ActionListener() 
@@ -124,6 +126,18 @@ public class MainMenu extends JFrame
 	    			 JOptionPane.showMessageDialog(null, user.getUsername()+" has no saved game.","Error", JOptionPane.ERROR_MESSAGE);
 	    	}
 	    });
+	    viewLeaderBoard.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent ae)
+	    	{
+	    		LeaderBoard scoreBoard = new LeaderBoard(user);
+	    		scoreBoard.setSize(800,600);
+	    		scoreBoard.setVisible(true);
+	    		scoreBoard.setTitle("CSE 360 Sudoku Leader Board");
+	    		dispose();
+	    		
+	    	}
+	    }
+	    );	
 	    viewProfile.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent ae)
 	    	{
@@ -131,7 +145,8 @@ public class MainMenu extends JFrame
 			    Profile profile = new Profile(user);
 			    profile.setVisible(true);
 			    profile.setTitle(user.getUsername() +"'s Profile");
-	    		profile.setSize(700,150);			    
+	    		profile.setSize(700,150);	
+	    		dispose();
 	    	}
 	    });
 	    logout.addActionListener(new ActionListener() {
@@ -152,7 +167,7 @@ public class MainMenu extends JFrame
 	}
 	public void selectBoard()
 	{
-		Select_Board selectBoard = new Select_Board(500,100, user);
+		Select_Board selectBoard = new Select_Board(900,300, user);
 		dispose();
 	}
 	public String findSavedGameSize()

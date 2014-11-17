@@ -34,6 +34,10 @@ public class Score
 	{
 		last_size = size;
 	}
+	public int getNumberOfHints()
+	{
+		return number_of_hints;
+	}
 	public  double getHighScore()
 	{
 		return high_score;

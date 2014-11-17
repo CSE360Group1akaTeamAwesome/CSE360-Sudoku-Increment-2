@@ -13,18 +13,26 @@ import javax.swing.*;
 
 public class Profile extends JFrame
 {
-	private JPanel mainPanel, userPanel, buttonPanel;
-	private JButton viewLastScore, viewHighScore, editUsername, editPassword;
 	private User user;
 	private JLabel userName;
 	private JTextField username, confirmUsername;
 	private JPasswordField oldPassword, password, confirmPassword;
 	private JFrame profileFrame;
+	
 	public Profile(User u)
 	{
 		user = u;
+		
+		JPanel mainPanel, userPanel, buttonPanel, panel, backPanel;
+		JButton viewLastScore, viewHighScore, editUsername, editPassword;
+		
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new FlowLayout());
+		panel.add(mainPanel,BorderLayout.CENTER);
+	
 		viewLastScore = new JButton("View Latest Game Data");
 		viewLastScore.addActionListener(new ActionListener()
 		{
@@ -60,7 +68,7 @@ public class Profile extends JFrame
 		});
 		editUsername = new JButton("Change Username");
 		editPassword = new JButton("Change Password");
-		this.add(mainPanel);
+		this.add(panel);
 		userPanel = new JPanel();
 		userPanel.setLayout(new GridLayout(1,1));
 		userName  = new JLabel("Username: " + user.getUsername());
@@ -75,6 +83,22 @@ public class Profile extends JFrame
 		buttonPanel.add(viewHighScore);
 		buttonPanel.add(editUsername);
 		buttonPanel.add(editPassword);
+		
+		backPanel = new JPanel(new FlowLayout());
+		JButton backToMenu = new JButton("Back To Main Menu");
+		backToMenu.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent ae)
+	    	{
+	    		MainMenu menu = new MainMenu(1000,800, user);
+				menu.setSize(1000,800);
+				menu.setVisible(true);
+				menu.setTitle("CSE360 Sudoku Main Menu");
+				dispose();
+	    	}
+	    });
+		backPanel.add(backToMenu);
+		panel.add(backPanel, BorderLayout.SOUTH);
+		
 		editUsername.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)

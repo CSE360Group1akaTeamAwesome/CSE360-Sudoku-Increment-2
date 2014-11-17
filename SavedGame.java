@@ -14,7 +14,7 @@ import javax.swing.text.StyledDocument;
 public class SavedGame extends SudokuBoard
 {
 	// Private instance variables for features of the board
-		private int currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
+		private int currentTime=0, seconds = 0, minutes = 0, numberOfHints=0, maxHints = 0;
 		private JTextField[][] entries,pencilEntries;
 		private JTextField timeDisplay,pencilModeNotification; 
 		private Timer timer;
@@ -23,11 +23,13 @@ public class SavedGame extends SudokuBoard
 		private JPanel pencilPanel, mainBoard;
 		private JPanel[] pencilRegions;
 		private boolean pencilMode_ON_OFF;
+		private AIPlayer hintSystem;
 		// Constructor for the new Board
 	public SavedGame(int width, int height, User u)
 	{
 		pencilMode_ON_OFF = false;
 		user = u;
+		numberOfHints = user.getScore().getNumberOfHints();
 		this.setBackground(Color.WHITE);
 		
 		this.setLayout(new BorderLayout());
@@ -122,8 +124,15 @@ public class SavedGame extends SudokuBoard
 	    {
 		    public void actionPerformed(ActionEvent ae)
 		    {
-				JOptionPane.showMessageDialog(null, "Hint: You just lost 5 points.", "Hint", JOptionPane.INFORMATION_MESSAGE);
-		    	numberOfHints++;
+		    	if(numberOfHints <= maxHints)
+				{
+					hintSystem.makeMove();
+					numberOfHints++;
+				}
+		    	else
+				{
+					JOptionPane.showMessageDialog(null, "You have used up all of your hints.", "Out of Hints", JOptionPane.ERROR_MESSAGE);
+				}
 		    }
 		});
 		JButton quit = new JButton("Quit Puzzle");
@@ -236,6 +245,14 @@ public class SavedGame extends SudokuBoard
 			}
 		}
 		loadPuzzle();
+		switch(difficulty)
+		{
+		case "Easy": maxHints = 10; break;
+		case "Medium": maxHints = 5; break;
+		case "Hard": maxHints = 2; break;
+		default: maxHints = 0; break;
+		}
+		hintSystem = new AIPlayer(difficulty, "9x9",entries);
 		try {
 			doc2.insertString(doc2.getLength(), "Solve this " + difficulty + " Puzzle, " + user.getUsername(), messageFont );
 		} catch (BadLocationException e) {
@@ -404,6 +421,7 @@ public class SavedGame extends SudokuBoard
 					difficulty = scanner.nextLine();
 					scanner.nextLine();
 					currentTime = Integer.parseInt(scanner.nextLine());
+					numberOfHints = Integer.parseInt(scanner.nextLine());
 					flag = true;
 				}
 			}
@@ -663,6 +681,8 @@ public class SavedGame extends SudokuBoard
 					iterator.set("9x9");
 					iterator.next();
 					iterator.set(String.valueOf(currentTime));
+					iterator.next();
+					iterator.set(String.valueOf(numberOfHints));
 					if(iterator.hasNext())
 					{
 						iterator.next();
@@ -683,6 +703,7 @@ public class SavedGame extends SudokuBoard
 				data.add(difficulty);
 				data.add("9x9");
 				data.add(String.valueOf(currentTime));
+				data.add(String.valueOf(numberOfHints));
 				data.add(currentPuzzle);
 			}
 			writer = new FileWriter("Saved_Games.txt");

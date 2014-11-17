@@ -14,7 +14,7 @@ import javax.swing.text.StyledDocument;
 public class SudokuBoard extends JFrame
 {
 	// Private instance variables for features of the board
-	private int currentTime=0, seconds = 0, minutes = 0, numberOfHints=0;
+	private int currentTime=0, seconds = 0, minutes = 0, numberOfHints=0, maxHints = 0;
 	private JTextField[][] entries,pencilEntries;
 	private JTextField timeDisplay,pencilModeNotification; 
 	private Timer timer;
@@ -23,6 +23,7 @@ public class SudokuBoard extends JFrame
 	private JPanel pencilPanel, mainBoard;
 	private JPanel[] pencilRegions;
 	private boolean pencilMode_ON_OFF;
+	private AIPlayer hintSystem;
 	// Constructor for the new Board
 	public SudokuBoard()
 	{
@@ -39,6 +40,13 @@ public class SudokuBoard extends JFrame
 		pencilMode_ON_OFF = false;
 		user = u;
 		difficulty = diff;
+		switch(difficulty)
+		{
+		case "Easy": maxHints = 10; break;
+		case "Medium": maxHints = 5; break;
+		case "Hard": maxHints = 2; break;
+		default: maxHints = 0; break;
+		}
 		this.setBackground(Color.WHITE);
 		
 		this.setLayout(new BorderLayout());
@@ -136,8 +144,15 @@ public class SudokuBoard extends JFrame
 	    {
 		    public void actionPerformed(ActionEvent ae)
 		    {
-				JOptionPane.showMessageDialog(null, "Hint: You just lost 5 points.", "Hint", JOptionPane.INFORMATION_MESSAGE);
-		    	numberOfHints++;
+				if(numberOfHints <= maxHints)
+				{
+					hintSystem.makeMove();
+					numberOfHints++;
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "You have used up all of your hints.", "Out of Hints", JOptionPane.ERROR_MESSAGE);
+				}
 		    }
 		});
 		JButton quit = new JButton("Quit Puzzle");
@@ -250,6 +265,7 @@ public class SudokuBoard extends JFrame
 			}
 		}
 		loadPuzzle(difficulty);
+		hintSystem = new AIPlayer(difficulty, "9x9",entries);
 	}
 	
 	public boolean checkRow(int row)
@@ -655,6 +671,8 @@ public class SudokuBoard extends JFrame
 					iterator.set("9x9");
 					iterator.next();
 					iterator.set(String.valueOf(currentTime));
+					iterator.next();
+					iterator.set(String.valueOf(numberOfHints));	
 					if(iterator.hasNext())
 					{
 						iterator.next();
@@ -675,6 +693,7 @@ public class SudokuBoard extends JFrame
 				data.add(difficulty);
 				data.add("9x9");
 				data.add(String.valueOf(currentTime));
+				data.add(String.valueOf(numberOfHints));
 				data.add(currentPuzzle);
 			}
 			writer = new FileWriter("Saved_Games.txt");

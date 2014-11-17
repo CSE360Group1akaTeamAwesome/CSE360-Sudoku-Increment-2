@@ -79,7 +79,7 @@ public class Sign_Up extends JFrame
 				   }
 				   
 				   
-				 int option = JOptionPane.showConfirmDialog(null, "Would you like to return to main menu?","User Successfully Created", JOptionPane.YES_NO_OPTION);
+				 int option = JOptionPane.showConfirmDialog(null, "Would you like to go to the main menu?","User Successfully Created", JOptionPane.YES_NO_OPTION);
 				 if(option == JOptionPane.YES_OPTION)
 				 {
 					User user = new User(usernameField.getText(),null,new Score());

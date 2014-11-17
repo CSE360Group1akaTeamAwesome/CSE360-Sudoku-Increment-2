@@ -66,6 +66,7 @@ public class LogIn extends JFrame
 		   }
 			
 		}});
+		initializeFiles();
 	}
 	public boolean loadUser(String username, String password)
 	{
@@ -187,6 +188,29 @@ public class LogIn extends JFrame
 		{
 			JOptionPane.showMessageDialog(null, "System Error: Can't find User Saved Game Info.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
+		}
+		
+	}
+	public void initializeFiles()
+	{
+		File Users, Scores, Saved_Games;
+		Users = new File("Users.txt");
+		Scores = new File("Scores.txt");
+		Saved_Games = new File("Saved_Games.txt");
+		try{
+			if (!Users.exists()) {
+				Users.createNewFile();
+			}
+			if (!Scores.exists()) {
+				Scores.createNewFile();
+			}
+			if (!Saved_Games.exists()) {
+				Saved_Games.createNewFile();
+			}
+		}
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null, "System Error. Could not create necessary system files.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}
