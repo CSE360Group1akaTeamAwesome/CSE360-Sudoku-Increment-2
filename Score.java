@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 public class Score {
 	private int 	best_time;
 	private int 	number_of_hints;
-	private double 	high_score
+	private double 	high_score;
 	private double 	current_score;
 	private int 	current_time;
 	private String 	best_difficulty;
