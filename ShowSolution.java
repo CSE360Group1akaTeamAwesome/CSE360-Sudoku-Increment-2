@@ -76,8 +76,8 @@ public class ShowSolution extends JFrame {
 				regions[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
 			}
 			//Initialize mainBoard
-			for(i = 0; i < 4; i++) {
-				for(j = 0; j < 4; j++) {
+			for(int i = 0; i < 4; i++) {
+				for(int j = 0; j < 4; j++) {
 					mainPanel.add(regions[counter]);
 					counter++;
 				}
