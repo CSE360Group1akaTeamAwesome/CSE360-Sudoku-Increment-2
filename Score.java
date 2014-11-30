@@ -1,3 +1,10 @@
+/*
+ * Score
+ *
+ * Version 1:
+ * Copyright Info:
+ */
+
 import javax.swing.JOptionPane;
 
 
@@ -9,7 +16,7 @@ public class Score
 	private int current_time;
 	private String best_difficulty, best_size, last_difficulty, last_size;
 	
-	public Score()
+	public Score ()
 	{
 		best_time = 0;
 		number_of_hints= 0;
@@ -22,83 +29,98 @@ public class Score
 		last_size = "";
 	}
 	
-	public void setNumberOfHints(int hints)
+	public void setNumberOfHints (int hints)
 	{
 		number_of_hints = hints;
 	}
-	public void setLastDifficulty(String difficulty)
+    
+	public void setLastDifficulty (String difficulty)
 	{
 		last_difficulty = difficulty;
 	}
-	public void setLastSize(String size)
+    
+	public void setLastSize (String size)
 	{
 		last_size = size;
 	}
-	public int getNumberOfHints()
+    
+	public int getNumberOfHints ()
 	{
 		return number_of_hints;
 	}
-	public  double getHighScore()
+    
+	public  double getHighScore ()
 	{
 		return high_score;
 	}
-	public int getBestTime()
+    
+	public int getBestTime ()
 	{
 		return best_time;
 	}
-	public String getBestDifficulty()
+	public String getBestDifficulty ()
 	{
 		return best_difficulty;
 	}
-	public String getBestSize()
+    
+	public String getBestSize ()
 	{
 		return best_size;
 	}
-	public double getCurrentScore()
+    
+	public double getCurrentScore ()
 	{
 		return current_score;
 	}
-	public int getCurrentTime()
+    
+	public int getCurrentTime ()
 	{
 		return current_time;
 	}
-	public String getLastDifficulty()
+    
+	public String getLastDifficulty ()
 	{
 		return last_difficulty;
 	}
-	public String getLastSize()
+    
+	public String getLastSize ()
 	{
 		return last_size;
 	}
-	public void calculateScore()
+    
+	public void calculateScore ()
 	{
 		double basePoints = 750.0, multiplier = 1.0;
-		if(last_difficulty.equals("Easy"))
+        /* Checks what the difficulty equals to set the multiplier */
+		if (last_difficulty.equals("Easy"))
 			multiplier = 1.0;
-		else if(last_difficulty.equals("Medium"))
+		else if (last_difficulty.equals("Medium"))
 			multiplier = 1.5;
-		else if(last_difficulty.equals("Hard"))
+		else if (last_difficulty.equals("Hard"))
 			multiplier = 2.0;
-		else if(last_difficulty.equals("Evil"))
+		else if (last_difficulty.equals("Evil"))
 			multiplier = 4.0;
 		
-		if(last_size.equals("9x9"))
+        /* Checks the size to set the base score */
+		if (last_size.equals("9x9"))
 			basePoints = 750.0;
-		else if(last_size.equals("16x16"))
+		else if (last_size.equals("16x16"))
 			basePoints = 1000.0;
 		
+        /* Calculates the score */
 		current_score = (float) ((( (480/current_time) * basePoints ) * multiplier ) - ( number_of_hints * 5.0 ) );
 		updateHighScore();
 	}
 	
-	public void setCurrentTime(int time)
+	public void setCurrentTime (int time)
 	{
 		current_time = time;
 	}
 	
-	public void updateHighScore()
+	public void updateHighScore ()
 	{
-		if(high_score < current_score)
+        /* Updates the high score if a new score is higher than a previous high score */
+		if (high_score < current_score)
 		{
 			high_score = current_score;
 			best_time = current_time;
@@ -107,8 +129,10 @@ public class Score
 			JOptionPane.showMessageDialog(null,"New High Score","High Score Updated",JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	public void loadScore(double highScore, int bestTime, String bestDifficulty, String bestSize, double lastScore, int lastTime, String lastDifficulty, String lastSize)
+    
+	public void loadScore (double highScore, int bestTime, String bestDifficulty, String bestSize, double lastScore, int lastTime, String lastDifficulty, String lastSize)
 	{
+        /* Loads new scores into the system */
 		high_score = highScore;
 		best_time = bestTime;
 		best_difficulty = bestDifficulty;
@@ -118,13 +142,18 @@ public class Score
 		last_difficulty = lastDifficulty;
 		last_size = lastSize;
 	}
-	public void displayLatestStats()
+    
+	public void displayLatestStats ()
 	{
+        /* Displays the scores based on the most recent score */
 		JOptionPane.showMessageDialog(null,"Difficulty: " + last_difficulty + "\nSize: " + last_size + "\nScore: " + current_score + "\nTime: " + current_time,"Last Puzzle Stats",JOptionPane.INFORMATION_MESSAGE);
 	}
-	public void displayBestStats()
+    
+	public void displayBestStats ()
 	{
+        /* Displays the score based on best score */
 		JOptionPane.showMessageDialog(null,"Difficulty: " + best_difficulty + "\nSize: " + best_size + "\nHigh Score: " + high_score + "\nTime: " + best_time,"Best Score Stats",JOptionPane.INFORMATION_MESSAGE);
 	}
+    
 	//public void showLeaderBoard();
 }

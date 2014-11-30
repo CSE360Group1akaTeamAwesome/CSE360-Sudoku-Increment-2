@@ -1,3 +1,10 @@
+/*
+ * AIBoard16x16
+ *
+ * Version 1:
+ * Copyright Info:
+ */
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +23,7 @@ import javax.swing.text.StyledDocument;
 
 public class AIBoard16x16 extends SudokuBoard16x16
 {
-	// Private instance variables for features of the board
+	/* Private instance variables for features of the board */
 	private int currentTime=0, seconds = 0, minutes = 0;
 	private JTextField[][] entries,pencilEntries;
 	private JTextField timeDisplay,pencilModeNotification; 
@@ -28,8 +35,8 @@ public class AIBoard16x16 extends SudokuBoard16x16
 	private boolean pencilMode_ON_OFF;
 	private AIPlayer AI;
 	
-	// Constructor for the new Board
-	public AIBoard16x16(int width, int height, String diff, User u)
+	/* Constructor for the new Board */
+	public AIBoard16x16 (int width, int height, String diff, User u)
 	{
 		pencilMode_ON_OFF = false;
 		user = u;
@@ -154,8 +161,8 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		pencilRegions = new JPanel[16];
 		
 		int i = 0, j = 0, k = 0, l = 0, counter = 0;
-		// Initialize 4x4 regions on mainboard
-		for(i = 0; i < 16; i++)
+		/* Initialize 4x4 regions on mainboard */
+		for (i = 0; i < 16; i++)
 		{
 			regions[i] = new JPanel();
 			regions[i].setLayout(new GridLayout(4,4));
@@ -169,13 +176,13 @@ public class AIBoard16x16 extends SudokuBoard16x16
 			counter++;
 		}
 		counter = 1;
-		for(i = 0; i < 16; i=i+4)
+		for (i = 0; i < 16; i=i+4)
 		{
-			for(j = 0; j < 16; j=j+4)
+			for (j = 0; j < 16; j=j+4)
 			{
-				for(k = i; k < i + 4; k++)
+				for (k = i; k < i + 4; k++)
 				{
-					for(l = j; l < j + 4; l++)
+					for (l = j; l < j + 4; l++)
 					{
 						pencilEntries[k][l] = new JTextField();
 						pencilEntries[k][l].setHorizontalAlignment(JTextField.CENTER);
@@ -202,32 +209,33 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		AI = new AIPlayer(difficulty,"16x16", entries);
 	}
 	
+    /* This class listens to moves that the user makes */
 	public class MoveListener implements KeyListener
 	{
 		private char input;
 		@Override
-		public void keyPressed(KeyEvent a) {	
+		public void keyPressed (KeyEvent a) {
 		}
 
 		@Override
-		public void keyReleased(KeyEvent a) {
+		public void keyReleased (KeyEvent a) {
 			input = a.getKeyChar();
-			if(!(a.getKeyCode() == KeyEvent.VK_BACK_SPACE))
+			if (!(a.getKeyCode() == KeyEvent.VK_BACK_SPACE))
 			{
 				if(checkInput(input))
 				{
 					int reply = JOptionPane.showConfirmDialog(null, "Confirm input of " + input + " ?");
-					if(reply == JOptionPane.YES_OPTION)
+					if (reply == JOptionPane.YES_OPTION)
 					{
-						if((AI.determineIfFinished()) == false)
+						if ((AI.determineIfFinished()) == false)
 				    	{
 				    		switchTurns();
-				    		if((AI.determineIfFinished()) == true)
+				    		if ((AI.determineIfFinished()) == true)
 					    	{
 				    			timer.stop();
 					    		computeStats();	
 					    		reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
-					    		if(reply == JOptionPane.YES_OPTION)
+					    		if (reply == JOptionPane.YES_OPTION)
 					    		{
 						    		MainMenu menu = new MainMenu(1000,800, user);
 									menu.setSize(1000,800);
@@ -244,7 +252,7 @@ public class AIBoard16x16 extends SudokuBoard16x16
 				    		timer.stop();
 				    		computeStats();	
 				    		reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
-				    		if(reply == JOptionPane.YES_OPTION)
+				    		if (reply == JOptionPane.YES_OPTION)
 				    		{
 					    		MainMenu menu = new MainMenu(1000,800, user);
 								menu.setSize(1000,800);
@@ -271,11 +279,12 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		}
 
 		@Override
-		public void keyTyped(KeyEvent a) {
+		public void keyTyped (KeyEvent a) {
 			
 		}
-		public boolean checkInput(char input){
-			 if((input == '1') || (input == '2')|| (input == '3')|| (input == '4')|| (input == '5')|| (input == '6')|| (input == '7')
+        
+		public boolean checkInput (char input){
+            if((input == '1') || (input == '2')|| (input == '3')|| (input == '4')|| (input == '5')|| (input == '6')|| (input == '7')
 					 || (input == '8')|| (input == '9')|| (input == 'a')|| (input == 'A')|| (input == 'b')|| (input == 'B')|| (input == 'c')
 					 || (input == 'C')|| (input == 'd')|| (input == 'D')|| (input == 'e')|| (input == 'E')|| (input == 'f')|| (input == 'F')
 					 || (input == 'e')|| (input == 'E')|| (input == 'f')|| (input == 'F')|| (input == 'g')|| (input == 'G'))
@@ -290,19 +299,22 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		}
 	}
 	
-	public boolean checkRow(int row)
+    /* This method checks the row */
+	public boolean checkRow (int row)
 	{
 		int i = 0, j = 0, count = 0;
-		for(i = 1; i < 10; i++)
+        /* Uses nested for loops to check the entries in the row */
+		for (i = 1; i < 10; i++)
 		{	
 			count = 0;
-			for(j = 0; j < 16; j++)
+			for (j = 0; j < 16; j++)
 			{
-				if(i == Integer.parseInt(entries[row][j].getText()) )
+				if (i == Integer.parseInt(entries[row][j].getText()) )
 				{
 					count++;
 				}
-				if( count >= 2)
+                
+				if ( count >= 2)
 				{
 					System.out.println("checkRow() returned false at i: " + row + " j: "+j + " with " + entries[row][j].getText()); 
 					return false;
@@ -313,19 +325,23 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		
 		return true;
 	}
-	public boolean checkColumn(int col)
+    
+    /* This method checks the column */
+	public boolean checkColumn (int col)
 	{
 		int i = 0, j = 0, count = 0;
-		for(j = 0; j < 10; j++)
+        /* Uses nested for loops to check the entries in the column */
+		for (j = 0; j < 10; j++)
 		{
 			count = 0;
-			for(i = 0; i < 16; i++)
+			for (i = 0; i < 16; i++)
 			{
-				if(j == Integer.parseInt(entries[i][col].getText()) )
+				if (j == Integer.parseInt(entries[i][col].getText()) )
 				{
 					count++;
 				}
-				if(count >= 2)
+                
+				if (count >= 2)
 				{
 					System.out.println("checkColumn() returned false at i: " + i + " j: "+ col + " with " + entries[i][col].getText()); 
 					return false;
@@ -336,22 +352,26 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		
 		return true;
 	}
-	public boolean checkBox(int row, int col)
+    
+    /* This method checks a box on the board */
+	public boolean checkBox (int row, int col)
 	{
 		int i = 0, j = 0, k = 0, count = 0;
-		for(k = 1; k < 10; k++)
+        /* Uses nested for loops to check the entries */
+		for (k = 1; k < 10; k++)
 		{
-			for(i = row; i < row+4; i++)
+			for (i = row; i < row+4; i++)
 			{
-				for(j = col; j < col+4; j++)
+				for (j = col; j < col+4; j++)
 				{	
 					count = 0;
 					
-						if(k == Integer.parseInt(entries[i][j].getText()) )
+						if (k == Integer.parseInt(entries[i][j].getText()) )
 						{
 							count++;
 						}
-						if(count >= 2)
+                    
+						if (count >= 2)
 						{
 							System.out.println("checkBox() returned false at i: " + i + " j: "+ j + " with " + entries[i][j].getText()); 
 							return false;
@@ -364,14 +384,15 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		return true;
 	}
 	
-	public boolean isEmptySpace()
+    /* checks if a space is empty */
+	public boolean isEmptySpace ()
 	{
 		int i = 0, j = 0;
-		for(i = 0; i < 16; i++)
+		for (i = 0; i < 16; i++)
 		{
-			for(j = 0; j < 16; j++)
+			for (j = 0; j < 16; j++)
 			{	
-				if(entries[i][j].getText().equals(""))
+				if (entries[i][j].getText().equals(""))
 				{
 					System.out.println("isEmptySpace() returned false at i: " + i + " j: "+j); 
 					return false;
@@ -380,42 +401,51 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		}
 		return true;
 	}
-	public boolean checkPuzzle()
+    
+    /* This method checks the puzzle */
+	public boolean checkPuzzle ()
 	{
 		int i = 0;
-		if(!isEmptySpace())
+        /* checks for empty space */
+		if (!isEmptySpace())
 		{
 			return false;
 		}
-		if(!validateInput())
+        
+        /* checks for valid input */
+		if (!validateInput())
 		{
 			return false;
 		}
-		for(i = 0; i < 16; i++)
+        
+		for (i = 0; i < 16; i++)
 		{
-			if(checkRow(i) == false || checkColumn(i) == false)
+			if (checkRow(i) == false || checkColumn(i) == false)
 			{
 				return false;
 			}
 		}
 		
-		if(!checkBox(0,0)||!checkBox(0,4)||!checkBox(0,8)||!checkBox(0,12)||!checkBox(4,0)||!checkBox(4,4)||!checkBox(4,8)||!checkBox(4,12)||!checkBox(8,0)||!checkBox(8,4)||!checkBox(8,8)||!checkBox(8,12)||!checkBox(12,0)||!checkBox(12,4)||!checkBox(12,8)||!checkBox(12,12))
+		if (!checkBox(0,0)||!checkBox(0,4)||!checkBox(0,8)||!checkBox(0,12)||!checkBox(4,0)||!checkBox(4,4)||!checkBox(4,8)||!checkBox(4,12)||!checkBox(8,0)||!checkBox(8,4)||!checkBox(8,8)||!checkBox(8,12)||!checkBox(12,0)||!checkBox(12,4)||!checkBox(12,8)||!checkBox(12,12))
 			return false;
 		
 		return true;
 	}
 	
-	public boolean validateInput()
+    /* This method validates user input */
+	public boolean validateInput ()
 	{
 		int i = 0, j = 0;
-		for(i = 0; i < 16; i++)
+        /* Uses nested for loops to check that all input is valid */
+		for (i = 0; i < 16; i++)
 		{
-			for(j = 0; j < 16; j++)
+			for (j = 0; j < 16; j++)
 			{
+                /* Uses a try/ catch to validate since there are both letters and numbers used as entries in this board size */
 				    try 
 				    {
 				    	
-				        if(!( entries[i][j].getText().equals("1")||entries[i][j].getText().equals("2")||entries[i][j].getText().equals("3")||entries[i][j].getText().equals("4")
+				        if (!( entries[i][j].getText().equals("1")||entries[i][j].getText().equals("2")||entries[i][j].getText().equals("3")||entries[i][j].getText().equals("4")
 				        		||entries[i][j].getText().equals("5")||entries[i][j].getText().equals("6")||entries[i][j].getText().equals("7")||entries[i][j].getText().equals("8")
 				        		||entries[i][j].getText().equals("9")||entries[i][j].getText().toUpperCase().equals("A")||entries[i][j].getText().toUpperCase().equals("B")
 				        		||entries[i][j].getText().toUpperCase().equals("C")||entries[i][j].getText().toUpperCase().equals("D")||entries[i][j].getText().toUpperCase().equals("E")
@@ -435,18 +465,20 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		return true;
 	}
 	
-	public void loadPuzzle(String difficulty)
+    /* This method loads a new puzzle */
+	public void loadPuzzle (String difficulty)
 	{
 		File file;
-		if(difficulty.equals("Easy"))
+        /* Uses if statements to check the difficulty level passed */
+		if (difficulty.equals("Easy"))
 		{
 			file = new File("easy16x16.txt");
 		}
-		else if(difficulty.equals("Medium"))
+		else if (difficulty.equals("Medium"))
 		{
 			file = new File("medium16x16.txt");
 		}
-		else if(difficulty.equals("Hard"))
+		else if (difficulty.equals("Hard"))
 		{
 			file = new File("hard16x16.txt");
 		}
@@ -457,18 +489,19 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		int i = 0, j = 0;
 		String value = "";
 		Scanner scanner;
+        /* this uses a try to make sure that it handles exceptions */
 		try 
 		{
 			scanner = new Scanner(file);
 			
-			for(i = 0; i < 16; i++)
+			for (i = 0; i < 16; i++)
 			{
-				for(j = 0; j < 16; j++)
+				for (j = 0; j < 16; j++)
 				{
 					if (scanner.hasNext())
 					{
 						value = scanner.next();
-						if(!value.equals("0"))
+						if (!value.equals("0"))
 						{
 							try
 							{
@@ -480,7 +513,7 @@ public class AIBoard16x16 extends SudokuBoard16x16
 								pencilEntries[i][j].setForeground(Color.BLUE);
 								pencilEntries[i][j].setEditable(false);
 							}
-							catch(Exception e)
+							catch (Exception e)
 							{
 								System.out.println("It broke at i: " + i + " j: " + j + " with " + value);	
 							}
@@ -490,18 +523,21 @@ public class AIBoard16x16 extends SudokuBoard16x16
 							entries[i][j].setText("");
 							pencilEntries[i][j].setText("");
 						}
-	
+    
 					}
 				}
 			}
 			scanner.close();
 		}
+        /* Catches any potential exceptions and throws an error message */
 		catch (FileNotFoundException e)
 		{
 			JOptionPane.showMessageDialog(null, "Could not load puzzle. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}
+    
+    /* This method computes a users stats */
 	public void computeStats()
 	{
 		user.getScore().setCurrentTime(currentTime);
@@ -514,7 +550,8 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		
 	}
 	
-	public void saveScoreStats()
+    /* This method gives user's the ability to save their stats */
+	public void saveScoreStats ()
 	{
 		File file = new File("Scores.txt");	
 		boolean flag = false;
@@ -522,19 +559,20 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		ArrayList<String> scoreData = new ArrayList<String>();
 		ListIterator<String> iterator;
 		
+        /* Uses a try statement to catch any exceptions */
 		try
 		{
 			Scanner s = new Scanner(file);
-			while(s.hasNextLine())
+			while (s.hasNextLine())
 			{
 				scoreData.add(s.nextLine());
 			}
 			s.close();
 			
 			iterator = scoreData.listIterator();
-			while(iterator.hasNext())
+			while (iterator.hasNext())
 			{
-				if(iterator.next().equals(user.getUsername()))
+				if (iterator.next().equals(user.getUsername()))
 				{
 					iterator.next();
 					iterator.set(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize()+ " "
@@ -544,7 +582,7 @@ public class AIBoard16x16 extends SudokuBoard16x16
 					break;
 				}
 			}
-			if(flag == false)
+			if (flag == false)
 			{
 				scoreData.add(user.getUsername());
 				scoreData.add(String.valueOf(user.getScore().getHighScore())+ " " + String.valueOf(user.getScore().getBestTime()) + " " + user.getScore().getBestDifficulty() + " " + user.getScore().getBestSize());
@@ -558,6 +596,7 @@ public class AIBoard16x16 extends SudokuBoard16x16
 			}
 			writer.close();
 		}
+        /* Catches either of the potential errors that could be thrown and handles them with a message */
 		catch (FileNotFoundException e)
 		{
 			JOptionPane.showMessageDialog(null, "Could not find Scores. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -568,35 +607,41 @@ public class AIBoard16x16 extends SudokuBoard16x16
 		}	
 	}
 	
-	public void backToMenu()
+    /* This method gives the user the option to return to the main menu at any time */
+	public void backToMenu ()
 	{
+        /* uses if and else statements to check what the user would like to do */
 		int reply = JOptionPane.showConfirmDialog(null, "Would you like to return to the Main Menu?");
-		if(reply == JOptionPane.YES_OPTION)
+		if (reply == JOptionPane.YES_OPTION)
 		{	
 			timer.stop();
 			
 			reply = JOptionPane.showConfirmDialog(null, "Would you like to see the solution?");
-			if(reply == JOptionPane.YES_OPTION)
+			if (reply == JOptionPane.YES_OPTION)
 			{
 				MainMenu menu = new MainMenu(1000,800, user);
 				menu.setSize(1000,800);
 				menu.setVisible(true);
 				menu.setTitle("CSE360 Sudoku Main Menu");
 				ShowSolution solution;
-				switch(difficulty)
+				switch (difficulty)
 				{
+                /* Uses case statements to load the solution */
 				case "Easy":
 					solution = new ShowSolution("easy16x16Solution.txt","16x16");
 					solution.setTitle("Easy 16x16 Solution");
 					break;
+                        
 				case "Medium":
 					solution = new ShowSolution("medium16x16Solution.txt", "16x16");
 					solution.setTitle("Medium 16x16 Solution");
 					break;
+                        
 				case "Hard":
 					solution = new ShowSolution("hard16x16Solution.txt", "16x16");
 					solution.setTitle("Hard 16x16 Solution");
 					break;
+                        
 				default:
 					solution = new ShowSolution("evil16x16Solution.txt", "16x16");
 					solution.setTitle("Evil 16x16 Solution");
@@ -617,46 +662,53 @@ public class AIBoard16x16 extends SudokuBoard16x16
 			}
 		}
 	}
-	public void changeFontColor(String color)
+    
+    /* This method allows users to change the font color to illustrate different paths they are taking */
+	public void changeFontColor (String color)
 	{
 		int i = 0, j = 0;
 		Color fontColor;
-		if(color.equals("Black"))
+        /* uses if and else if statements to set the color */
+		if (color.equals("Black"))
 			fontColor = Color.BLACK;
-		else if(color.equals("Cyan"))
+		else if (color.equals("Cyan"))
 			fontColor = Color.CYAN;
-		else if(color.equals("Green"))
+		else if (color.equals("Green"))
 			fontColor = Color.GREEN;
-		else if(color.equals("Magenta"))
+		else if (color.equals("Magenta"))
 			fontColor = Color.MAGENTA;
-		else if(color.equals("Orange"))
+		else if (color.equals("Orange"))
 			fontColor = Color.ORANGE;
-		else if(color.equals("Pink"))
+		else if (color.equals("Pink"))
 			fontColor = Color.PINK;
-		else if(color.equals("Red"))
+		else if (color.equals("Red"))
 			fontColor = Color.RED;
 		else 
 			fontColor = Color.YELLOW;
 		
-		for(i = 0; i < 16; i++)
+        /* uses nested for loops and if statements to actually set the color */
+		for (i = 0; i < 16; i++)
 		{
-			for(j = 0; j < 16; j++)
+			for (j = 0; j < 16; j++)
 			{
-				if(entries[i][j].isEditable() && entries[i][j].getText().equals(""))
+				if (entries[i][j].isEditable() && entries[i][j].getText().equals(""))
 				{
 					entries[i][j].setForeground(fontColor);
 				}
-				if(pencilEntries[i][j].isEditable() && pencilEntries[i][j].getText().equals(""))
+                
+				if (pencilEntries[i][j].isEditable() && pencilEntries[i][j].getText().equals(""))
 				{
 					pencilEntries[i][j].setForeground(fontColor);
 				}
 			}
 		}
 		
-	}	
+	}
+	
+    /* This method gives the functionality for a user to input guesses and take notes */
 	public void switchPencilMode()
 	{
-		// Turn On Pencil Mode
+		/* Turn On Pencil Mode */
 		if(pencilMode_ON_OFF == false)
     	{
     		pencilMode_ON_OFF = true;
@@ -667,7 +719,7 @@ public class AIBoard16x16 extends SudokuBoard16x16
     		this.revalidate();
     		this.repaint();
     	}
-		// Turn Off Pencil Mode
+		/* Turn Off Pencil Mode */
 		else
 		{
 			pencilMode_ON_OFF = false;
@@ -678,23 +730,28 @@ public class AIBoard16x16 extends SudokuBoard16x16
     		this.repaint();
 		}
 	}
-	public void copyToPencilMode()
+    
+    /* transfers data already placed to pencil mode */
+	public void copyToPencilMode ()
 	{
 		int i = 0, j = 0;
 		
-		for(i = 0; i < 16; i++)
+		for (i = 0; i < 16; i++)
 		{
-			for(j = 0; j < 16; j++)
+			for (j = 0; j < 16; j++)
 			{
-				if((pencilEntries[i][j].isEditable()) && (pencilEntries[i][j].getText().equals("")))
+				if ((pencilEntries[i][j].isEditable()) && (pencilEntries[i][j].getText().equals("")))
 				{
 					pencilEntries[i][j].setText(entries[i][j].getText());
 				}
 			}
 		}
 	}
-	public void switchTurns(){
-		if(!AI.makeMove())
+    
+    /* This method gives the game to functionality so the AI and the user can switch turns back and forth */
+	public void switchTurns ()
+    {
+		if (!AI.makeMove())
 		{
 			JOptionPane.showMessageDialog(null, "Error with AI. Could not make move.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
