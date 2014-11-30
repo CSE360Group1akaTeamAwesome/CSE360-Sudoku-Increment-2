@@ -1,3 +1,10 @@
+/*
+ * AIPlayer
+ *
+ * Version 1:
+ * Copyright Info:
+ */
+
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -6,31 +13,40 @@ import javax.swing.*;
 
 import java.util.Random;
 
-public class AIPlayer {
+public class AIPlayer
+{
 	private JTextField[][] entries;
 	private String[][] solution;
 	private String size, difficulty;
 	
-	public AIPlayer(String diff, String bigness, JTextField[][] tiles){
+    /* The constructor */
+	public AIPlayer (String diff, String bigness, JTextField[][] tiles)
+    {
 		entries = tiles;
 		difficulty = diff;
 		size = bigness;
-		if(size.equals("9x9"))
+        
+		if (size.equals("9x9"))
 			solution = new String[9][9];
 		else
 			solution = new String[16][16];
+        
 		setSolution();
 	}
-	public boolean makeMove(){
-		if(findMistake() == false)
+    
+    /* This method has the AI player make a move */
+	public boolean makeMove ()
+    {
+        /* Uses nested else and if statements to either fix a mistake or fill in an empty space */
+		if (findMistake() == false)
 		{
-			if(addNumberToBoard())
+			if (addNumberToBoard())
 			{
 				return true;
 			}
 			else
 			{
-				if(updateEmptySpace())
+				if (updateEmptySpace())
 				{
 					return true;
 				}
@@ -41,17 +57,22 @@ public class AIPlayer {
 			return true;
 		
 	}
-	public boolean findMistake(){
+    
+    /* This method finds a mistake on the board */
+	public boolean findMistake ()
+    {
 		int i = 0, j = 0;
-		if(size.equals("9x9"))
+        /* Checks the size */
+		if (size.equals("9x9"))
 		{
-			for(i = 0; i < 9; i++)
+            /* Uses nested for loops and if statements to check entered numbers */
+			for (i = 0; i < 9; i++)
 			{
-				for(j = 0; j < 9; j++)
+				for (j = 0; j < 9; j++)
 				{
-					if( !(entries[i][j].getText().equals("")) && (entries[i][j].isEditable()) )
+					if ( !(entries[i][j].getText().equals("")) && (entries[i][j].isEditable()) )
 					{
-						if(!entries[i][j].getText().equals(solution[i][j]))
+						if (!entries[i][j].getText().equals(solution[i][j]))
 						{
 							entries[i][j].setText(solution[i][j]);
 							entries[i][j].setForeground(Color.WHITE);
@@ -64,15 +85,16 @@ public class AIPlayer {
 				}
 			}
 		}
+        /* Same as above for 16x16 */
 		else
 		{
-			for(i = 0; i < 16; i++)
+			for (i = 0; i < 16; i++)
 			{
-				for(j = 0; j < 16; j++)
+				for (j = 0; j < 16; j++)
 				{
-					if( !(entries[i][j].getText().equals("")) && (entries[i][j].isEditable()) )
+					if ( !(entries[i][j].getText().equals("")) && (entries[i][j].isEditable()) )
 					{
-						if(!entries[i][j].getText().equals(solution[i][j]))
+						if (!entries[i][j].getText().equals(solution[i][j]))
 						{
 							entries[i][j].setText(solution[i][j]);
 							entries[i][j].setForeground(Color.WHITE);
@@ -86,16 +108,21 @@ public class AIPlayer {
 		}
 		return false;
 	}
-	public boolean addNumberToBoard(){
+    
+    /* This method adds a random number to the board when there are no errors to fix */
+	public boolean addNumberToBoard ()
+    {
 		int row = 0, col = 0, counter = 0;
 		Random randomGenerator = new Random();
-		if(size.equals("9x9"))
+        /* Checks board size */
+		if (size.equals("9x9"))
 		{
-			while(counter < 200)
+            /* uses a while loop to generate a random number and then an if statement to place a solution */
+			while (counter < 200)
 			{
 				row = randomGenerator.nextInt(9);
 				col = randomGenerator.nextInt(9);
-				if( (entries[row][col].getText().equals("")) && (entries[row][col].isEditable()) )
+				if ( (entries[row][col].getText().equals("")) && (entries[row][col].isEditable()) )
 				{
 					entries[row][col].setText(solution[row][col]);
 					entries[row][col].setForeground(Color.WHITE);
@@ -106,13 +133,14 @@ public class AIPlayer {
 				counter++;
 			}
 		}
+        /* Same as above for 16x16 board */
 		else
 		{
-			while(counter < 200)
+			while (counter < 200)
 			{
 				row = randomGenerator.nextInt(16);
 				col = randomGenerator.nextInt(16);
-				if( (entries[row][col].getText().equals("")) && (entries[row][col].isEditable()) )
+				if ((entries[row][col].getText().equals("")) && (entries[row][col].isEditable()) )
 				{
 					entries[row][col].setText(solution[row][col]);
 					entries[row][col].setForeground(Color.WHITE);
@@ -125,29 +153,34 @@ public class AIPlayer {
 		}
 		return false;
 	}
-	public boolean updateEmptySpace()
+    
+    /* This method checks if a space is empty */
+	public boolean updateEmptySpace ()
 	{
 		int i = 0, j = 0;
-		if(size.equals("9x9"))
+        /* Checks the size */
+		if (size.equals("9x9"))
 		{
-			for(i = 0; i < 9; i++)
+            /* Uses nested for loops to check if a space is empty */
+			for (i = 0; i < 9; i++)
 			{
-				for(j = 0; j < 9; j++)
+				for (j = 0; j < 9; j++)
 				{
-					if(entries[i][j].getText().equals(""))
+					if (entries[i][j].getText().equals(""))
 					{
 						entries[i][j].setText(solution[i][j]);
 					}
 				}
 			}
 		}
+        /* Same as above for 16x16 board */
 		else
 		{
-			for(i = 0; i < 16; i++)
+			for (i = 0; i < 16; i++)
 			{
-				for(j = 0; j < 16; j++)
+				for (j = 0; j < 16; j++)
 				{
-					if(entries[i][j].getText().equals(""))
+					if (entries[i][j].getText().equals(""))
 					{
 						entries[i][j].setText(solution[i][j]);
 					}
@@ -156,64 +189,79 @@ public class AIPlayer {
 		}
 		return false;
 	}
-	public void setSolution(){
+    
+    /* This method sets the solution to the puzzle */
+	public void setSolution ()
+    {
 		File file = null;
 		int i = 0, j = 0, v = 0;
 		String value ="";
 		Scanner scanner;
-		if(size.equals("9x9"))
+        /* Checks the size */
+		if (size.equals("9x9"))
 		{
-			switch(difficulty)
+            /* Uses a switch statement to find the appropriate solution */
+			switch (difficulty)
 			{
 			case "Easy":
 				file = new File("easy9x9Solution.txt");
 				break;
+                    
 			case "Medium":
 				file = new File("medium9x9Solution.txt");
 				break;
+                    
 			case "Hard":
 				file = new File("hard9x9Solution.txt");
 				break;
+                    
 			default:
 				file = new File("evil9x9Solution.txt");
 				break;
 			}
 		}
+        /* Same as above for 16x16 board */
 		else
 		{
-			switch(difficulty)
+			switch (difficulty)
 			{
 			case "Easy":
 				file = new File("easy16x16Solution.txt");
 				break;
+                    
 			case "Medium":
 				file = new File("medium16x16Solution.txt");
 				break;
+                    
 			case "Hard":
 				file = new File("hard16x16Solution.txt");
 				break;
+                    
 			default:
 				file = new File("evil16x16Solution.txt");
 				break;
 			}
 		}
+        /* Uses a try statement to catch any exceptions */
 		try 
 		{
 			scanner = new Scanner(file);
-			if(size.equals("9x9"))
+            /* Uses nested if and for loops to read in the solution */
+			if (size.equals("9x9"))
 			{
-				for(i = 0; i < 9; i++)
+				for (i = 0; i < 9; i++)
 				{
-					for(j = 0; j < 9; j++)
+					for (j = 0; j < 9; j++)
 					{
 						if (scanner.hasNextInt())
 						{
-							v= scanner.nextInt();						
+							v= scanner.nextInt();
+                            /* nested try statement to catch more exceptions */
 							try
 							{
 								solution[i][j]=(String.valueOf(v));
 							}
-							catch(Exception e)
+							catch (Exception e)
 							{
 								System.out.println("It broke at i: " + i + " j: " + j + " with " + String.valueOf(v));	
 							}
@@ -222,11 +270,12 @@ public class AIPlayer {
 					}
 				}
 			}
+            /* Same as above for 16x16 board */
 			else
 			{
-				for(i = 0; i < 16; i++)
+				for (i = 0; i < 16; i++)
 				{
-					for(j = 0; j < 16; j++)
+					for (j = 0; j < 16; j++)
 					{
 						if (scanner.hasNext())
 						{
@@ -235,7 +284,7 @@ public class AIPlayer {
 							{
 								solution[i][j] = value;
 							}
-							catch(Exception e)
+							catch (Exception e)
 							{
 								System.out.println("It broke at i: " + i + " j: " + j + " with " + value);	
 							}
@@ -246,36 +295,41 @@ public class AIPlayer {
 			}
 			scanner.close();
 		}
+        /* Catches the outer exceptiona and prints the error */
 		catch (FileNotFoundException e)
 		{
 			JOptionPane.showMessageDialog(null, "Could not load solution. Contact system administrator.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-		
 	}
-	public boolean determineIfFinished()
+    
+    /* This method determines when the game is finished */
+	public boolean determineIfFinished ()
 	{
 		int i = 0, j = 0;
-		if(size.equals("9x9"))
+        /* Checks the size */
+		if (size.equals("9x9"))
 		{
-			for(i = 0; i < 9; i++)
+            /* Uses nested for loops and if statements to check if the game is finished based on all places being full or more errors remaining */
+			for (i = 0; i < 9; i++)
 			{
-				for(j = 0; j < 9; j++)
+				for (j = 0; j < 9; j++)
 				{
 					System.out.println(entries[i][j].getText());
-					if((entries[i][j].getText().equals(solution[i][j])) == false)
+					if ((entries[i][j].getText().equals(solution[i][j])) == false)
 					{
 						return false;
 					}
 				}
 			}
 		}
+        /* Same as above for 16x16 board */
 		else
 		{
-			for(i = 0; i < 16; i++)
+			for (i = 0; i < 16; i++)
 			{
-				for(j = 0; j < 16; j++)
+				for (j = 0; j < 16; j++)
 				{
-					if((entries[i][j].getText().equals(solution[i][j])) == false)
+					if ((entries[i][j].getText().equals(solution[i][j])) == false)
 					{
 						return false;
 					}

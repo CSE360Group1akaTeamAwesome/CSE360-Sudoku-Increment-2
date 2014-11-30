@@ -1,3 +1,11 @@
+/*
+ * CSE360Sudoku
+ *
+ * Version 1:
+ * Copyright Info:
+ */
+
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -5,8 +13,8 @@ import java.util.*;
 
 public class CSE360Sudoku extends JApplet
 {
-	// The init() method is the starting point of the JApplet. Here is where the log-in screen is created.
-	public void init()
+	/* The init() method is the starting point of the JApplet. Here is where the log-in screen is created. */
+	public void init ()
 	{
 		LogIn log_in = new LogIn(400,150);
 		log_in.setVisible(true);

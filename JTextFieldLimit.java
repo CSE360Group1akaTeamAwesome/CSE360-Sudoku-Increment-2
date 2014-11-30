@@ -1,3 +1,10 @@
+/*
+ * JTextFieldLimit
+ *
+ * Version 1:
+ * Copyright Info:
+ */
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -13,23 +20,30 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-public class JTextFieldLimit extends PlainDocument {
+public class JTextFieldLimit extends PlainDocument
+{
 	private int limit;
-	  JTextFieldLimit(int limit) {
+    
+      /* This class has overloaded constructors that take either an int or an int and a boolean as parameters */
+	  JTextFieldLimit (int limit)
+    {
 	    super();
 	    this.limit = limit;
 	  }
 
-	  JTextFieldLimit(int limit, boolean upper) {
+	  JTextFieldLimit (int limit, boolean upper)
+    {
 	    super();
 	    this.limit = limit;
 	  }
 
-	  public void insertString(int offset, String str, javax.swing.text.AttributeSet attr) throws BadLocationException {
+	  public void insertString (int offset, String str, javax.swing.text.AttributeSet attr) throws BadLocationException
+    {
 	    if (str == null)
 	      return;
 
-	    if ((getLength() + str.length()) <= limit) {
+	    if ((getLength() + str.length()) <= limit)
+        {
 	      super.insertString(offset, str, attr);
 	    }
 	  }
